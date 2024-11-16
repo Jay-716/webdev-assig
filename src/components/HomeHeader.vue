@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull } from '@element-plus/icons-vue';
+import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets } from '@element-plus/icons-vue';
 
 const userLoggedIn = ref(true)
 const user = ref({username: 'jay', avatar_url: 'https://empty'})
@@ -26,6 +26,10 @@ const avatarErrorHandler = function() {
                     <ShoppingCartFull v-else/>
                 </el-icon>
                 <h2>购物车</h2>
+            </RouterLink>
+            <RouterLink to="/tickets">
+                <el-icon><Tickets/></el-icon>
+                <h2>订单</h2>
             </RouterLink>
             <RouterLink to="/notification">
                 <el-icon><Bell/></el-icon>
