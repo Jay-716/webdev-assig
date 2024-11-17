@@ -5,7 +5,7 @@
             <h3 class="product-name">{{ product.name }}</h3>
             <span class="product-description">{{ product.description }}</span>
             <span class="product-price">{{ product.price }}</span>
-            <button class="add-to-cart">Add to Cart</button>
+            <button class="add-to-cart" v-if="!nobutton">Add to Cart</button>
         </div>
     </div>
 </template>
@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef } from 'vue';
 
-const { product, height, width } = defineProps({
+const { product, height, width, nobutton } = defineProps({
     product: {
         type: Object,
         required: true
@@ -25,22 +25,25 @@ const { product, height, width } = defineProps({
     width: {
         type: String,
         required: false
+    },
+    nobutton: {
+      type: Boolean,
+      required: false,
     }
 })
 
 var productCard = useTemplateRef('productCard')
 
 onMounted(() => {
-    productCard.value?.focus()
+  productCard.value?.focus()
+  if (productCard.value) {
     if (height !== undefined && height.length !== 0) {
-        if (productCard.value) {
-            productCard.value.style.height = height
-        }
+      productCard.value.style.height = height
     }
     if (width !== undefined && width.length !== 0) {
-        if (productCard.value)
-            productCard.value.style.width = width
+      productCard.value.style.width = width
     }
+  }
 })
 </script>
 
