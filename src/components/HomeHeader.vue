@@ -27,7 +27,7 @@ const avatarErrorHandler = function() {
                 </el-icon>
                 <h2>购物车</h2>
             </RouterLink>
-            <RouterLink to="/tickets">
+            <RouterLink to="/order">
                 <el-icon><Tickets/></el-icon>
                 <h2>订单</h2>
             </RouterLink>
