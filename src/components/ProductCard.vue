@@ -1,16 +1,17 @@
 <template>
-    <div class="product-card" ref="productCard">
+    <div class="product-card" ref="productCard" @click="handleCardClick">
         <img :src="product.image" :alt="product.name" class="product-image" />
         <div class="product-info">
             <h3 class="product-name">{{ product.name }}</h3>
             <span class="product-description">{{ product.description }}</span>
             <span class="product-price">{{ product.price }}</span>
-            <button class="add-to-cart" v-if="!nobutton">Add to Cart</button>
+            <button class="add-to-cart" v-if="!nobutton" @click.stop="handleButtonClick">Add to Cart</button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import router from '@/router';
 import { onMounted, useTemplateRef } from 'vue';
 
 const { product, height, width, nobutton } = defineProps({
@@ -31,6 +32,18 @@ const { product, height, width, nobutton } = defineProps({
       required: false,
     }
 })
+
+const handleCardClick = function(event: Event) {
+  router.push({
+    name: 'product-detail',
+    params: {
+      id: product.id
+    }
+  })
+}
+const handleButtonClick = function(event: Event) {
+  console.log('button clicked')
+}
 
 var productCard = useTemplateRef('productCard')
 
@@ -54,6 +67,7 @@ onMounted(() => {
   border-radius: 8px;
   overflow: hidden; /* To keep image and content within the card */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 .product-image {
   width: 100%;
