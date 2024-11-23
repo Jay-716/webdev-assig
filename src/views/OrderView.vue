@@ -68,12 +68,23 @@ import type { Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
 
+// TODO: consider factoring out these interfaces
+interface IProduct {
+    id: Number,
+    name: String,
+    // description: String,
+    image: String,
+    // price: Number,
+    // created_at: Date,
+    // updated_at: Date,
+}
+
 interface IOrder {
     id: Number,
     order_id: String,
     status: String,
     address: String,
-    products: Array<Object>,
+    products: Array<IProduct>,
     totalPrice: Number,
     paymentService: String,
     created_at: Date,
@@ -86,10 +97,10 @@ const handlePageChange = function(page: Number) {
 
 // TODO: add a computed property that maps orders to orderDisplays
 const orders: Ref<Array<IOrder>> = ref([
-    { id: 1, order_id: "ABC12345", status: "运输中", created_at: new Date(), address: "scut1", products: [{name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-    { id: 2, order_id: "ABC12346", status: "交易成功", created_at: new Date(), address: "scut2", products: [{name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-    { id: 3, order_id: "ABC12347", status: "交易成功", created_at: new Date(), address: "scut3", products: [{name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-    { id: 4, order_id: "ABC12348", status: "交易成功", created_at: new Date(), address: "scut4", products: [{name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
+    { id: 1, order_id: "ABC12345", status: "运输中", created_at: new Date(), address: "scut1", products: [{id: 1, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
+    { id: 2, order_id: "ABC12346", status: "交易成功", created_at: new Date(), address: "scut2", products: [{id: 2, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
+    { id: 3, order_id: "ABC12347", status: "交易成功", created_at: new Date(), address: "scut3", products: [{id: 3, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
+    { id: 4, order_id: "ABC12348", status: "交易成功", created_at: new Date(), address: "scut4", products: [{id: 4, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
 ])
 
 const selectedOrder: Ref<IOrder | undefined> = ref()
