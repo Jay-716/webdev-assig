@@ -132,12 +132,14 @@ onUnmounted(() => {
 
 <template>
     <div class="header-outer" ref="headerOuter">
-        <div class="logo-title">
-            <el-icon class="logo">
-                <ShoppingBag />
-            </el-icon>
-            <h1 class="title">Jay的小商城</h1>
-        </div>
+        <RouterLink to="/">
+            <div class="logo-title">
+                <el-icon class="logo">
+                    <ShoppingBag />
+                </el-icon>
+                <h1 class="title">Jay的小商城</h1>
+            </div>
+        </RouterLink>
         <el-input placeholder="搜索" class="search-bar" :prefix-icon="Search" v-model="searchText" />
         <nav class="nav-links">
             <RouterLink to="/cart">
@@ -306,6 +308,9 @@ onUnmounted(() => {
     justify-content: space-between;
     height: 100%;
     background-color: #d0ddeb;
+}
+.header-outer a {
+    text-decoration: none
 }
 
 .logo-title {
