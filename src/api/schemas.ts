@@ -10,8 +10,8 @@ export interface LoginResponse {
 
 export interface RegisterForm {
     username: String,
-    phone_number: String,
-    email: String,
+    phone_number: String | null,
+    email: String | null,
     password: String
 }
 export interface RegisterResponse {
