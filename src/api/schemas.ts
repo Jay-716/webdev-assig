@@ -49,3 +49,49 @@ export interface RandomGoodResponse {
     price: Number,
     image_id: String | null
 }
+
+export interface StoreResponse {
+    id: Number,
+    owner_id: Number,
+    name: String,
+    description: String,
+    image_id: String | null
+}
+
+export interface DetailResponse {
+    id: Number,
+    good_id: Number,
+    text: String | null,
+    image_id: String | null
+}
+
+export interface StyleResponse {
+    id: Number,
+    good_id: Number,
+    name: String,
+    description: String | null,
+    price: Number,
+    image_id: String | null
+}
+
+export interface TagLinkResponse {
+    id: Number,
+    tag_id: Number,
+    tag: {id: Number; name: String; description: String | null; },
+    good_id: Number,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface GoodDetailResponse {
+    id: Number,
+    store_id: Number,
+    name: String,
+    description: String,
+    price: Number,
+    image_id: String | null,
+    store: StoreResponse,
+    details: Array<DetailResponse>,
+    styles: Array<StyleResponse>,
+    tag_links: Array<TagLinkResponse>
+}

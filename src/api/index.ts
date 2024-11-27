@@ -41,3 +41,10 @@ export function getRandomGoods() {
     url: '/good/random'
   })
 }
+
+export function getGoodDetail(good_id: Number) {
+  return request({
+    method: 'get',
+    url: `/good/${good_id}`
+  })
+}
