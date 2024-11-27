@@ -20,3 +20,24 @@ export function register(data: schemas.RegisterForm) {
     data: data
   })
 }
+
+export function getBanner() {
+  return request({
+    method: 'get',
+    url: '/banner/active'
+  })
+}
+
+export function getRandomTags() {
+  return request({
+    method: 'get',
+    url: '/tag/random'
+  })
+}
+
+export function getRandomGoods() {
+  return request({
+    method: 'get',
+    url: '/good/random'
+  })
+}

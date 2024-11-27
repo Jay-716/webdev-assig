@@ -26,3 +26,26 @@ export interface RegisterResponse {
     created_at: Date,
     updated_at: Date
 }
+
+export interface BannerResponse {
+    id: Number,
+    image_id: String,
+    deleted: Boolean,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface RandomTagResponse {
+    id: Number,
+    name: String,
+    description: String | null
+}
+
+export interface RandomGoodResponse {
+    id: Number,
+    store_id: Number,
+    name: String,
+    description: String,
+    price: Number,
+    image_id: String | null
+}

@@ -2,7 +2,7 @@
   <div class="banner-container">
     <el-carousel trigger="click" :interval="5000">
       <el-carousel-item v-for="banner in banners" :key="banner.id">
-        <el-image :src="banner.image" :alt="banner.name" class="banner-image">
+        <el-image :src="banner.image_id" :alt="banner.image_id" class="banner-image">
           <template #placeholder>
             <div class="banner-image-slot">
               <span>LOADING...</span>
@@ -27,72 +27,47 @@
       <span style="font-family: sans-serif; margin-right: 6px;">热门标签</span>
     </div>
     <div class="tag-container">
-      <div class="tag-wrapper" v-for="tag in tags" :key="tag.id">
+      <div class="tag-wrapper" v-for="tag in tags" :key="tag.id as PropertyKey">
         <span>{{ tag.name }}</span>
       </div>
     </div>
   </div>
   <div class="product-container">
-    <div class="product-card" v-for="product in products" :key="product.id">
+    <div class="product-card" v-for="product in products" :key="product.id as PropertyKey">
       <ProductCard :product="product" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, type Ref } from 'vue';
 import { Histogram, Picture as IconPicture } from '@element-plus/icons-vue';
 import ProductCard from './ProductCard.vue';
+import { getBanner, getRandomGoods, getRandomTags } from '@/api';
+import type { BannerResponse, RandomGoodResponse, RandomTagResponse } from '@/api/schemas';
+import type { AxiosResponse } from 'axios';
 
-const products = ref([
-    { id: 1, name: 'Product 1', description: 'Description 1', price: '$19.99', image: '/path/to/image1.jpg' },
-    { id: 2, name: 'Product 2', description: 'Description 2', price: '$29.99', image: '/path/to/image2.jpg' },
-    { id: 3, name: 'Product 3', description: 'Description 3', price: '$39.99', image: '/path/to/image3.jpg' },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg' },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg' },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg' },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg' },
-])
+const products: Ref<Array<RandomGoodResponse>> = ref([])
+const banners: Ref<Array<BannerResponse>> = ref([])
+const tags: Ref<Array<RandomTagResponse>> = ref([])
 
-const banners = ref([
-    {id: 1, name: 'banner1', image: 'https://empty1'},
-    {id: 2, name: 'banner2', image: 'https://empty2'},
-    {id: 3, name: 'banner3', image: 'https://empty3'},
-    {id: 4, name: 'banner4', image: 'https://empty4'},
-])
-
-const tags = ref([
-  {id: 1, name: "tag1"},
-  {id: 2, name: "tag2"},
-  {id: 3, name: "tag3"},
-  {id: 4, name: "tag4"},
-  {id: 5, name: "tag5"},
-  {id: 6, name: "tag6"},
-  {id: 7, name: "tag7"},
-  {id: 8, name: "tag8"},
-  {id: 9, name: "tag9"},
-  {id: 10, name: "tag10"},
-  {id: 11, name: "tag11"},
-  {id: 12, name: "tag12"},
-  {id: 13, name: "tag13"},
-  {id: 14, name: "tag14"},
-  {id: 15, name: "tag15"},
-  {id: 16, name: "tag16"},
-  {id: 17, name: "tag17"},
-  {id: 18, name: "tag18"},
-  {id: 19, name: "tag19"},
-  {id: 20, name: "tag20"},
-  {id: 21, name: "tag21"},
-  {id: 22, name: "tag22"},
-  {id: 23, name: "tag23"},
-  {id: 24, name: "tag24"},
-  {id: 25, name: "tag25"},
-  {id: 26, name: "tag26"},
-  {id: 27, name: "tag27"},
-  {id: 28, name: "tag28"},
-  {id: 29, name: "tag29"},
-  {id: 30, name: "tag30"},
-])
+onMounted(async () => {
+  try {
+    banners.value = (await getBanner() as AxiosResponse<Array<BannerResponse>>).data
+  } catch (err) {
+    console.error(err)
+  }
+  try {
+    tags.value = (await getRandomTags() as AxiosResponse<Array<RandomTagResponse>>).data
+  } catch (err) {
+    console.error(err)
+  }
+  try {
+    products.value = (await getRandomGoods() as AxiosResponse<Array<RandomGoodResponse>>).data
+  } catch (err) {
+    console.error(err)
+  }
+})
 </script>
 
 <style scoped>
