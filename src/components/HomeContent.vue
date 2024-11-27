@@ -44,12 +44,12 @@ import { ref, onMounted, type Ref } from 'vue';
 import { Histogram, Picture as IconPicture } from '@element-plus/icons-vue';
 import ProductCard from './ProductCard.vue';
 import { getBanner, getRandomGoods, getRandomTags } from '@/api';
-import type { BannerResponse, RandomGoodResponse, RandomTagResponse } from '@/api/schemas';
+import type { BannerResponse, GoodResponse, TagResponse } from '@/api/schemas';
 import type { AxiosResponse } from 'axios';
 
-const products: Ref<Array<RandomGoodResponse>> = ref([])
+const products: Ref<Array<GoodResponse>> = ref([])
 const banners: Ref<Array<BannerResponse>> = ref([])
-const tags: Ref<Array<RandomTagResponse>> = ref([])
+const tags: Ref<Array<TagResponse>> = ref([])
 
 onMounted(async () => {
   try {
@@ -58,12 +58,12 @@ onMounted(async () => {
     console.error(err)
   }
   try {
-    tags.value = (await getRandomTags() as AxiosResponse<Array<RandomTagResponse>>).data
+    tags.value = (await getRandomTags() as AxiosResponse<Array<TagResponse>>).data
   } catch (err) {
     console.error(err)
   }
   try {
-    products.value = (await getRandomGoods() as AxiosResponse<Array<RandomGoodResponse>>).data
+    products.value = (await getRandomGoods() as AxiosResponse<Array<GoodResponse>>).data
   } catch (err) {
     console.error(err)
   }

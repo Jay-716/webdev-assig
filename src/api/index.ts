@@ -48,3 +48,24 @@ export function getGoodDetail(good_id: Number) {
     url: `/good/${good_id}`
   })
 }
+
+export function getCartItems() {
+  return request({
+    method: 'get',
+    url: '/order/cart'
+  })
+}
+
+export function getAddresses() {
+  return request({
+    method: 'get',
+    url: '/address'
+  })
+}
+
+export function getPaymentServices() {
+  return request({
+    method: 'get',
+    url: '/v1/pay/avail'
+  })
+}

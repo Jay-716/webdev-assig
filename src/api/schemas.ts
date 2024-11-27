@@ -35,13 +35,13 @@ export interface BannerResponse {
     updated_at: Date
 }
 
-export interface RandomTagResponse {
+export interface TagResponse {
     id: Number,
     name: String,
     description: String | null
 }
 
-export interface RandomGoodResponse {
+export interface GoodResponse {
     id: Number,
     store_id: Number,
     name: String,
@@ -94,4 +94,31 @@ export interface GoodDetailResponse {
     details: Array<DetailResponse>,
     styles: Array<StyleResponse>,
     tag_links: Array<TagLinkResponse>
+}
+
+export interface CartItemResponse {
+    id: Number,
+    user_id: Number,
+    good_id: Number,
+    good: GoodResponse,
+    style_id: Number,
+    style: StyleResponse,
+    count: Number,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface AddressResponse {
+    id: Number,
+    postcode: String | null,
+    detail: String,
+    name: String,
+    phone_number: String,
+    comment: String | null,
+    user_id: Number
+}
+
+export interface PaymentServiceResponse {
+    id: Number,
+    name: String
 }

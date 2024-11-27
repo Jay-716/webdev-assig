@@ -5,8 +5,8 @@
     <div style="position: absolute; top: 60px; bottom: 80px; left: 0; right: 0; overflow: auto;">
         <div style="padding: 5px 150px;">
             <div class="product-grid">
-                <div v-for="product in products" :key="product.id" class="product-box">
-                    <el-image :src="product.image" :alt="product.name" style="width: 175px; aspect-ratio: 1;">
+                <div v-for="product, idx in products" :key="product.id as PropertyKey" class="product-box">
+                    <el-image :src="product.good.image_id" :alt="product.good.name" style="width: 175px; aspect-ratio: 1;">
                         <template #placeholder>
                             <div class="product-image-slot">
                                 <span>LOADING...</span>
@@ -21,12 +21,12 @@
                         </template>
                     </el-image>
                     <div class="product-info">
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{ product.name}}</span>
+                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{ product.good.name }}</span>
                         <span
-                            style="font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{product.description }}</span>
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px; margin-top: auto;">{{product.price }}</span>
+                            style="font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{ product.good.description }}</span>
+                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px; margin-top: auto;">{{ product.good.price }}</span>
                     </div>
-                    <el-checkbox size="large" v-model="product.selected" style="margin: 15px; margin-left: auto;" />
+                    <el-checkbox size="large" v-model="selection[idx]" style="margin: 15px; margin-left: auto;" />
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
             <div style="display: flex; align-items: center; padding: 5px 10px;">
                 <span>收货地址：</span>
                 <el-select v-model="address" style="width: 300px;">
-                    <el-option v-for="a in addresses" :key="a.id" :label="a.display" :value="a.id"/>
+                    <el-option v-for="a in addresses" :key="a.id" :label="a.detail" :value="a.id"/>
                 </el-select>
             </div>
             <el-table :data="selectedProducts">
@@ -71,9 +71,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, type Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
+import { getCartItems, getAddresses, getPaymentServices } from '@/api';
+import type { CartItemResponse, AddressResponse, PaymentServiceResponse } from '@/api/schemas';
+import type { AxiosResponse } from 'axios';
 
 const totalPrice = ref(12345)
 const totalPriceDisplay = computed(() => {
@@ -81,22 +84,51 @@ const totalPriceDisplay = computed(() => {
     return s.slice(0, -2) + '.' + s.slice(-2)
 })
 const selectAll = ref(false)
-const products = ref([
-    { id: 1, name: 'Product 1', description: 'Description 1', price: '$19.99', image: '/path/to/image1.jpg', selected: false },
-    { id: 2, name: 'Product 2', description: 'Description 2', price: '$29.99', image: '/path/to/image2.jpg', selected: false },
-    { id: 3, name: 'Product 3', description: 'Description 3', price: '$39.99', image: '/path/to/image3.jpg', selected: false },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg', selected: false },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg', selected: false },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg', selected: false },
-    { id: 4, name: 'Product 4', description: 'Description 4', price: '$49.99', image: '/path/to/image4.jpg', selected: false },
-])
-const selectedProducts = computed(() => products.value.filter(p => p.selected))
+const products: Ref<Array<CartItemResponse>> = ref([])
+const selection: Ref<Array<Boolean>> = ref([])
+const selectedProducts = computed(() => products.value.filter((_, idx) => selection.value[idx]).map(c => c.good))
 
 const purchaseDialogVisible = ref(false)
-const address = ref(1)
-const addresses = ref([{ id: 1, display: "scut" }])
-const paymentService = ref(1)
-const paymentServices = ref([{ id: 1, name: '支付宝' }, { id: 2, name: '微信支付' }, { id: 3, name: '银联' }])
+const address = ref(0)
+const addresses: Ref<Array<AddressResponse>> = ref([])
+const paymentService = ref(0)
+const paymentServices: Ref<Array<PaymentServiceResponse>> = ref([])
+
+onMounted(async () => {
+    try {
+        const cart_items = await getCartItems() as AxiosResponse<{
+            total: Number;
+            page: Number;
+            size: Number;
+            pages: Number;
+            items: Array<CartItemResponse>;
+        }>
+        products.value = cart_items.data.items
+        selection.value = Array(products.value.length).fill(false)
+    } catch (err) {
+        console.error(err)
+    }
+    try {
+        const address_response = await getAddresses() as AxiosResponse<{
+            total: Number;
+            page: Number;
+            size: Number;
+            pages: Number;
+            items: Array<AddressResponse>;
+        }>
+        addresses.value = address_response.data.items
+        address.value = addresses.value[0].id as number
+    } catch (err) {
+        console.error(err)
+    }
+    try {
+        const services = await getPaymentServices() as AxiosResponse<Array<PaymentServiceResponse>>
+        paymentServices.value = services.data
+        paymentService.value = paymentServices.value[0].id as number
+    } catch (err) {
+        console.error(err)
+    }
+})
 </script>
 
 <style scoped>
