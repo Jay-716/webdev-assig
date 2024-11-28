@@ -135,6 +135,7 @@ const handleSubmit = async function() {
     }
 }
 const handleLogout = function() {
+    localStorage.removeItem('token')
     router.replace({
         name: 'login'
     })
