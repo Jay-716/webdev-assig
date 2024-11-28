@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef, Teleport, Transition, reactive, onUnmounted } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, Teleport, Transition, reactive, onUnmounted, type Ref } from 'vue';
 import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets } from '@element-plus/icons-vue';
+import { getUser } from '@/api';
+import type { AxiosResponse } from 'axios';
+import type { UserResponse } from '@/api/schemas';
 
 const userLoggedIn = ref(true)
-const user = ref({username: 'jay', avatar_url: 'https://empty'})
+const user: Ref<UserResponse | undefined> = ref()
 const cartEmpty = ref(true)
 const searchText = ref('');
 const notifications = ref([
@@ -13,7 +16,7 @@ const notifications = ref([
 ])
 
 const avatarErrorHandler = function() {
-    console.warn("Failed to load avatar, url:", user.value.avatar_url)
+    console.warn("Failed to load avatar, url:", user.value?.avatar_id)
 }
 
 const notifPopupState = reactive({
@@ -116,7 +119,7 @@ const updatePopupState = () => {
 }
 
 const headerOuter = useTemplateRef('headerOuter')
-onMounted(() => {
+onMounted(async () => {
     headerOuter.value?.focus()
     notifPopupState.box?.focus()
     notifPopupState.popup?.focus()
@@ -124,6 +127,13 @@ onMounted(() => {
     settPopupState.popup?.focus()
     updatePopupState()
     window.addEventListener("resize", updatePopupState)
+
+    try {
+        const me = await getUser() as AxiosResponse<UserResponse>
+        user.value = me.data
+    } catch (err) {
+        console.error(err)
+    }
 })
 onUnmounted(() => {
     window.removeEventListener("resize", updatePopupState)
@@ -169,8 +179,8 @@ onUnmounted(() => {
                 </el-icon>
                 <h2>设置</h2>
             </div>
-            <RouterLink to="/user" :title="userLoggedIn ? user.username : '请登录'">
-                <el-avatar v-if="userLoggedIn" :size="40" :src="user.avatar_url" @error="avatarErrorHandler">
+            <RouterLink to="/user" :title="userLoggedIn ? user?.username : '请登录'">
+                <el-avatar v-if="userLoggedIn" :size="40" :src="user?.avatar_id" @error="avatarErrorHandler">
                     <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                 </el-avatar>
                 <el-avatar v-else :size="40" :icon="UserFilled" />

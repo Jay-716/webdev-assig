@@ -6,15 +6,15 @@
         <div style="box-sizing: border-box; height: 100%; display: flex; align-items: center; justify-content: center;">
             <div
                 style="padding: 20px 20px 20px 50px; width: 400px; display: flex; flex-direction: column; align-items: center">
-                <el-avatar :size="150" :src="user.avatar_url" @error="avatarErrorHandler" style="margin: 10px;">
+                <el-avatar :size="150" :src="user?.avatar_id" @error="avatarErrorHandler" style="margin: 10px;">
                     <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                 </el-avatar>
                 <el-form :model="userForm" label-width="auto" style="width: 300px; max-width: 600px; margin: 20px">
                     <el-form-item label="用户名">
-                        <el-input v-model="userForm.username" />
+                        <el-input v-model="userForm.username" disabled/>
                     </el-form-item>
                     <el-form-item label="手机号码">
-                        <el-input v-model="userForm.phonenumber" />
+                        <el-input v-model="userForm.phone_number" />
                     </el-form-item>
                     <el-form-item label="邮箱">
                         <el-input v-model="userForm.email" />
@@ -35,21 +35,21 @@
             <div style="align-self: center; padding: 20px; width: 600px; display: flex; flex-direction: column; align-items: baseline;">
                 <el-row style="width: 500px; margin-bottom: 50px;">
                     <el-col :span="6">
-                        <el-statistic title="注册天数" :value="1000"/>
+                        <el-statistic title="注册天数" :value="userProfile?.reg_days"/>
                     </el-col>
                     <el-col :span="6">
-                        <el-statistic title="订单数量" :value="123"/>
+                        <el-statistic title="订单数量" :value="userProfile?.order_count"/>
                     </el-col>
                     <el-col :span="6">
-                        <el-statistic title="购买产品数量" :value="167"/>
+                        <el-statistic title="购买产品数量" :value="userProfile?.good_count"/>
                     </el-col>
                     <el-col :span="6">
-                        <el-statistic title="评价数量" :value="32"/>
+                        <el-statistic title="评价数量" :value="userProfile?.comment_count"/>
                     </el-col>
                 </el-row>
                 <el-timeline style="margin: 20px;">
-                    <el-timeline-item v-for="event in timelineEvents" :key="event.id" :timestamp="event.time.toDateString()">
-                        {{ event.name }}
+                    <el-timeline-item v-for="event in timelineEvents" :key="event[0]" :timestamp="new Date(event[1] as string).toDateString()">
+                        {{ event[0] }}
                     </el-timeline-item>
                 </el-timeline>
             </div>
@@ -58,43 +58,46 @@
 </template>
 
 <script setup lang="ts">
+import { getUser, getUserProfile } from '@/api';
+import type { UserProfileResponse, UserResponse } from '@/api/schemas';
 import HomeHeader from '@/components/HomeHeader.vue';
+import type { AxiosResponse } from 'axios';
+import { type Ref } from 'vue';
 
 const avatarErrorHandler = function() {
-    console.warn("Failed to load avatar, url:", user.value.avatar_url)
+    console.warn("Failed to load avatar, url:", user.value?.avatar_id)
 }
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 
-const user = ref({
-    id: 1,
-    username: 'test name',
-    phonenumber: '12345',
-    email: '12345@mail.com',
-    bio: 'hahaha',
-    birthday: new Date(),
-    avatar_url: 'http://empty',
-    created_at: new Date().toDateString(),
-    updated_at: new Date().toDateString(),
-})
+const user: Ref<UserResponse | undefined> = ref()
 
 const userForm = reactive({
-    username: user.value.username,
-    phonenumber: user.value.phonenumber,
-    email: user.value.email,
-    bio: user.value.bio,
-    birthday: user.value.birthday,
+    username: user.value?.username,
+    phone_number: user.value?.phone_number,
+    email: user.value?.email,
+    bio: user.value?.bio,
+    birthday: user.value?.birtyday,
 })
 
 const handleSubmit = function() {
     console.log('submit', userForm)
 }
 
-const timelineEvents = ref([
-    {id: 1, name: "账号创建", time: new Date()},
-    {id: 2, name: "第一次购物", time: new Date()},
-    {id: 3, name: "第一次收货", time: new Date()},
-    {id: 4, name: "第一次评价", time: new Date()},
-])
+const userProfile: Ref<UserProfileResponse | undefined> = ref()
+const timelineEvents: Ref<Array<Array<String>>> = ref([])
+
+onMounted(async () => {
+    try {
+        const me = await getUser() as AxiosResponse<UserResponse>
+        user.value = me.data
+        Object.assign(userForm, me.data)
+        const profile = await getUserProfile() as AxiosResponse<UserProfileResponse>
+        userProfile.value = profile.data
+        timelineEvents.value = profile.data.timeline
+    } catch (err) {
+        console.error(err)
+    }
+})
 </script>
 
 <style scoped>

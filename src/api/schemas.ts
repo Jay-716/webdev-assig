@@ -27,6 +27,28 @@ export interface RegisterResponse {
     updated_at: Date
 }
 
+export interface UserResponse {
+    id: Number,
+    username: String,
+    phone_number: String | null,
+    email: String | null,
+    gender: Number,
+    avatar_id: String | null,
+    bio: String | null,
+    role: Number,
+    birtyday: Date,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface UserProfileResponse {
+    reg_days: Number,
+    order_count: Number,
+    good_count: Number,
+    comment_count: Number,
+    timeline: Array<Array<String>>
+}
+
 export interface BannerResponse {
     id: Number,
     image_id: String,

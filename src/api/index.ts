@@ -21,6 +21,20 @@ export function register(data: schemas.RegisterForm) {
   })
 }
 
+export function getUser() {
+  return request({
+    method: 'get',
+    url: '/auth/me'
+  })
+}
+
+export function getUserProfile() {
+  return request({
+    method: 'get',
+    url: '/user/profile'
+  })
+}
+
 export function getBanner() {
   return request({
     method: 'get',
