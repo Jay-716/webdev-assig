@@ -24,3 +24,7 @@ body,
 .justc {
     justify-content: center;
 }
+
+.sans-font {
+    font-family: sans-serif;
+}

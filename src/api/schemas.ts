@@ -220,3 +220,9 @@ export interface AddAddressRequest {
     phone_number: String,
     comment: String | null
 }
+
+export interface RegStoreRequest {
+    name: String,
+    description: String,
+    image_id: String | null
+}

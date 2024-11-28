@@ -163,3 +163,18 @@ export function addAddress(data: schemas.AddAddressRequest) {
     data: data
   })
 }
+
+export function addStore(data: schemas.RegStoreRequest) {
+  return request({
+    method: 'post',
+    url: '/store',
+    data: data
+  })
+}
+
+export function getStore() {
+  return request({
+    method: 'get',
+    url: '/store'
+  })
+}
