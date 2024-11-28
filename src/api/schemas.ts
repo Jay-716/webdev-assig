@@ -172,3 +172,16 @@ export interface OrderDetailResponse extends OrderResponse {
     address: AddressResponse,
     order_items: Array<OrderItemResponse>
 }
+
+export interface AddToCartRequest {
+    good_id: Number,
+    style_id: Number | null,
+    count: Number
+}
+
+export interface DirectBuyRequest {
+    good_id: Number,
+    style_id: Number | null,
+    address_id: Number,
+    count: Number
+}

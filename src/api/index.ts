@@ -97,3 +97,19 @@ export function getDetailOrder(order_id: Number) {
     url: `/order/${order_id}`
   })
 }
+
+export function addToCart(data: schemas.AddToCartRequest) {
+  return request({
+    method: 'put',
+    url: '/order/cart',
+    data: data
+  })
+}
+
+export function directBuy(data: schemas.DirectBuyRequest) {
+  return request({
+    method: 'post',
+    url: '/order/direct-buy',
+    data: data
+  })
+}

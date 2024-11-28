@@ -49,8 +49,8 @@
                 <div
                     style="box-sizing: border-box; flex: 1; height: 100%; display: flex; flex-direction: column; align-items: end; padding: 10px;">
                     <div style="margin-top: auto;">
-                        <el-button size="large" style="width: 100%;">加入购物车</el-button>
-                        <el-button size="large" type="primary"
+                        <el-button size="large" style="width: 100%;" @click="handleAddToCart">加入购物车</el-button>
+                        <el-button size="large" type="primary" @click="handleDirectBuy"
                             style="margin-top: 5px; width: 100%; margin-left: 0;">立即购买</el-button>
                     </div>
                 </div>
@@ -135,9 +135,11 @@
 import { computed, onMounted, ref, type Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
-import { getGoodDetail } from '@/api';
+import { addToCart, directBuy, getAddresses, getGoodDetail } from '@/api';
 import type { AxiosResponse } from 'axios';
-import type { GoodDetailResponse } from '@/api/schemas';
+import type { AddressResponse, GoodDetailResponse } from '@/api/schemas';
+import { ElMessage } from 'element-plus';
+import router from '@/router';
 
 const { id } = defineProps({
     id: {
@@ -149,6 +151,7 @@ const { id } = defineProps({
 const product: Ref<GoodDetailResponse | null> = ref(null)
 const selectedStyleIdx = ref(product.value?.styles?.length || 0)
 const selectedStyle = computed(() => product.value?.styles[selectedStyleIdx.value])
+const count = ref("")
 const commentLevel = ref(4)
 const tags = computed(() => {
     return product.value?.tag_links.map(tl => tl.tag)
@@ -157,6 +160,51 @@ const priceDisplay = computed(() => {
     const s = product.value?.price.toString()
     return s?.slice(0, -1) + '.' + s?.slice(-1)
 })
+
+const handleAddToCart = async () => {
+    try {
+        const response = await addToCart({
+            good_id: product.value?.id as number,
+            style_id: selectedStyle.value?.id || null,
+            count: 1
+        })
+        ElMessage({
+            type: 'success',
+            message: '加入购物车成功'
+        })
+    } catch (err) {
+        console.error(err)
+    }
+}
+const handleDirectBuy = async () => {
+    try {
+        const response = await directBuy({
+            good_id: product.value?.id as number,
+            style_id: selectedStyle.value?.id || null,
+            count: 1,
+            address_id: (await getAddresses() as AxiosResponse<{
+                total: Number;
+                page: Number;
+                size: Number;
+                pages: Number;
+                items: Array<AddressResponse>;
+            }>).data.items[0].id
+        })
+        ElMessage({
+            type: 'success',
+            message: '支付成功'
+        })
+        ElMessage({
+            type: 'success',
+            message: '购买成功'
+        })
+        router.push({
+            name: 'order'
+        })
+    } catch (err) {
+        console.error(err)
+    }
+}
 
 onMounted(async () => {
     try {
@@ -183,7 +231,8 @@ onMounted(async () => {
   height: 100%;
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
-  font-size: 20px;
+  font-size: 14px;
+  font-family: sans-serif;
 }
 .product-image-slot .el-icon {
   font-size: 30px;
