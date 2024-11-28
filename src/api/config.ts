@@ -1,11 +1,12 @@
 import axios from 'axios'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
+import { baseUrl } from '@/config'
 
 export default function request(options: axios.AxiosRequestConfig<any>) {
   return new Promise((resolve, reject) => {
     const instance = axios.create({
-      baseURL: 'http://localhost:8000',
+      baseURL: baseUrl,
       timeout: 10 * 1000,
     })
 

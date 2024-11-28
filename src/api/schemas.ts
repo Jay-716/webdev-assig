@@ -1,3 +1,11 @@
+export interface Page<T> {
+    total: Number;
+    page: Number;
+    size: Number;
+    pages: Number;
+    items: Array<T>;
+}
+
 export interface LoginForm {
     username: String,
     password: String
@@ -225,4 +233,17 @@ export interface RegStoreRequest {
     name: String,
     description: String,
     image_id: String | null
+}
+
+export interface StoreProfileResponse {
+    day_order_count: Number,
+    month_order_count: Number,
+    day_total_price: Number,
+    month_total_price: Number
+}
+
+export interface StoreGoodProfileResponse {
+    day_count: Number,
+    month_count: Number,
+    timeline: Array<[String, String]>
 }

@@ -102,6 +102,7 @@ import {addAddress, deleteAddress, getAddresses, getUser, getUserProfile, update
 import type {AddressResponse, UserProfileResponse, UserResponse, UserUpdate} from '@/api/schemas';
 import HomeHeader from '@/components/HomeHeader.vue';
 import router from '@/router';
+import { useUserStore } from '@/store/user';
 import type { AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus';
 import { type Ref } from 'vue';
@@ -112,6 +113,7 @@ const avatarErrorHandler = function() {
 import { onMounted, reactive, ref } from 'vue';
 
 const user: Ref<UserResponse | undefined> = ref()
+const userStore = useUserStore()
 
 const userForm = reactive({
     username: user.value?.username,
@@ -134,9 +136,10 @@ const handleSubmit = async function() {
         console.error(err)
     }
 }
-const handleLogout = function() {
+const handleLogout = async function() {
     localStorage.removeItem('token')
-    router.replace({
+    userStore.storeLogin = false
+    await router.replace({
         name: 'login'
     })
 }

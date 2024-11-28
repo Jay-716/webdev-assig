@@ -178,3 +178,75 @@ export function getStore() {
     url: '/store'
   })
 }
+
+export function getStoreProfile() {
+  return request({
+    method: 'get',
+    url: '/sgood/profile'
+  })
+}
+
+export function getStoreGoodProfile(good_id: Number) {
+  return request({
+    method: 'get',
+    url: '/sgood/profile/good',
+    params: {
+      good_id: good_id,
+    }
+  })
+}
+
+export function getStoreGoods(page?: Number, size?: Number) {
+  return request({
+    method: 'get',
+    url: '/sgood',
+    params: {
+      page: page,
+      size: size
+    }
+  })
+}
+
+export function getStoreGoodOrders(good_id: Number) {
+  return request({
+    method: 'get',
+    url: `/sgood/orders/${good_id}`
+  })
+}
+
+export function sendOrderItem(order_item_id: Number) {
+  return request({
+    method: 'put',
+    url: '/sgood/send',
+    params: {
+      order_item_id: order_item_id
+    }
+  })
+}
+
+export function getOrderItemStatus(order_item_id: Number) {
+  return request({
+    method: 'get',
+    url: '/sgood/status',
+    params: {
+      order_item_id: order_item_id
+    }
+  })
+}
+
+export function getOrderItemAddress(order_item_id: Number){
+  return request({
+    method: 'get',
+    url: '/sgood/address',
+    params: {
+      order_item_id: order_item_id
+    }
+  })
+}
+
+export function deleteGood(good_id: Number) {
+  return request({
+    method: 'delete',
+    url: `/good/${good_id}`
+  })
+}
