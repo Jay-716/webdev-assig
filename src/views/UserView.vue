@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { getUser, getUserProfile, updateUser } from '@/api';
-import type { UserProfileResponse, UserResponse } from '@/api/schemas';
+import type { UserProfileResponse, UserResponse, UserUpdate } from '@/api/schemas';
 import HomeHeader from '@/components/HomeHeader.vue';
 import router from '@/router';
 import type { AxiosResponse } from 'axios';
@@ -85,7 +85,7 @@ const userForm = reactive({
 const handleSubmit = async function() {
     console.log('submit', userForm)
     try {
-        const response = await updateUser(userForm) as AxiosResponse<UserResponse>
+        const response = await updateUser(userForm as UserUpdate) as AxiosResponse<UserResponse>
         Object.assign(userForm, response.data)
         ElMessage({
             type: 'success',
