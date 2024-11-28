@@ -73,7 +73,7 @@
                 </el-select>
                 <div style="margin-left: auto">
                     <span style="margin-right: 20px;">合计：{{ totalPrice }}</span>
-                    <el-button type="primary">支付</el-button>
+                    <el-button type="primary" @click="handlePay">支付</el-button>
                 </div>
             </div>
         </div>
@@ -84,9 +84,11 @@
 import { computed, onMounted, ref, type Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
-import { getCartItems, getAddresses, getPaymentServices } from '@/api';
+import { getCartItems, getAddresses, getPaymentServices, cartBuy } from '@/api';
 import type { CartItemResponse, AddressResponse, PaymentServiceResponse } from '@/api/schemas';
 import type { AxiosResponse } from 'axios';
+import { ElMessage } from 'element-plus';
+import router from '@/router';
 
 const totalPrice = ref(12345)
 const totalPriceDisplay = computed(() => {
@@ -103,6 +105,39 @@ const address = ref(0)
 const addresses: Ref<Array<AddressResponse>> = ref([])
 const paymentService = ref(0)
 const paymentServices: Ref<Array<PaymentServiceResponse>> = ref([])
+
+const handlePay = async () => {
+    try {
+        const response = await cartBuy({
+            cart_item_ids: products.value.filter((_, idx) => selection.value[idx]).map(c => c.id),
+            address_id: address.value
+        })
+        purchaseDialogVisible.value = false
+        ElMessage({
+            type: 'success',
+            message: '支付成功'
+        })
+        ElMessage({
+            type: 'success',
+            message: '购买成功'
+        })
+        // refresh these shits
+        const cart_items = await getCartItems() as AxiosResponse<{
+            total: Number;
+            page: Number;
+            size: Number;
+            pages: Number;
+            items: Array<CartItemResponse>;
+        }>
+        products.value = cart_items.data.items
+        selection.value = Array(products.value.length).fill(false)
+        router.push({
+            name: 'order'
+        })
+    } catch (err) {
+        console.error(err)
+    }
+}
 
 onMounted(async () => {
     try {

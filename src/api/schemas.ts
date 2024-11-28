@@ -185,3 +185,13 @@ export interface DirectBuyRequest {
     address_id: Number,
     count: Number
 }
+
+export interface PayOrderRequest {
+    order_id: Number,
+    service_id: Number
+}
+
+export interface CartBuyRequest {
+    cart_item_ids: Array<Number>,
+    address_id: Number
+}

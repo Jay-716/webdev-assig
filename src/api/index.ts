@@ -113,3 +113,19 @@ export function directBuy(data: schemas.DirectBuyRequest) {
     data: data
   })
 }
+
+export function payOrder(data: schemas.PayOrderRequest) {
+  return request({
+    method: 'post',
+    url: '/v1/pay/pay-order',
+    data: data
+  })
+}
+
+export function cartBuy(data: schemas.CartBuyRequest) {
+  return request({
+    method: 'post',
+    url: '/order/cart-buy',
+    data: data
+  })
+}

@@ -10,12 +10,12 @@
                     <el-image :src="order.order_items[0].good.image_id" :alt="order.order_items[0].good.name"
                         style="width: 100px; aspect-ratio: 1;">
                         <template #placeholder>
-                            <div class="product-image-slot">
+                            <div class="order-image-slot">
                                 <span>LOADING...</span>
                             </div>
                         </template>
                         <template #error>
-                            <div class="product-image-slot">
+                            <div class="order-image-slot">
                                 <el-icon>
                                     <IconPicture />
                                 </el-icon>
@@ -151,7 +151,8 @@ onMounted(async () => {
   height: 100%;
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
-  font-size: 30px;
+  font-size: 14px;
+  font-family: sans-serif;
 }
 .order-info {
     display: flex;
