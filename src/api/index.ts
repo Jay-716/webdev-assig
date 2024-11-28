@@ -69,3 +69,17 @@ export function getPaymentServices() {
     url: '/v1/pay/avail'
   })
 }
+
+export function getOrders() {
+  return request({
+    method: 'get',
+    url: '/order'
+  })
+}
+
+export function getDetailOrder(order_id: Number) {
+  return request({
+    method: 'get',
+    url: `/order/${order_id}`
+  })
+}

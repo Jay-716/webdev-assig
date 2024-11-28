@@ -7,7 +7,7 @@
             <div class="order-list">
                 <div v-for="order in orders" :key="order.id as PropertyKey" class="order-box"
                     @click="selectedOrder = order; orderDialogVisible = true">
-                    <el-image :src="order.products[0].image" :alt="order.products[0].name"
+                    <el-image :src="order.order_items[0].good.image_id" :alt="order.order_items[0].good.name"
                         style="width: 100px; aspect-ratio: 1;">
                         <template #placeholder>
                             <div class="product-image-slot">
@@ -24,16 +24,16 @@
                     </el-image>
                     <div class="order-info">
                         <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{
-                            order.products[0].name }}</span>
+                            order.order_items[0].good.name }}</span>
                         <div
                             style="display: flex; align-items: last baseline; margin-top: auto; font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a;">
-                            <span style="flex: 1;">订单号：{{ order.order_id }}</span>
+                            <span style="flex: 1;">订单号：{{ order.id }}</span>
                             <span style="flex: 1;">下单时间：{{ order.created_at.toDateString() }}</span>
                         </div>
                     </div>
                     <div class="order-status">
                         <el-text type="success" size="large">{{ order.status }}</el-text>
-                        <el-text size="large">{{ order.totalPrice }}</el-text>
+                        <el-text size="large">{{ order.total_price }}</el-text>
                     </div>
                 </div>
             </div>
@@ -45,17 +45,19 @@
     <el-dialog v-model="orderDialogVisible" title="确认订单" width="800">
         <div style="display: flex; flex-direction: column;">
             <div style="display: flex; align-items: center; padding: 5px 10px;">
-                <span>收货地址：{{ selectedOrder?.address }}</span>
+                <span>收货地址：{{ selectedOrder?.address.detail }}</span>
             </div>
-            <el-table :data="selectedOrder?.products">
+            <el-table :data="selectedOrder?.order_items.map(o => o.good)">
                 <el-table-column property="name" label="商品名" width="250" />
                 <el-table-column property="description" label="商品详情" width="400" />
                 <el-table-column property="price" label="价格" />
             </el-table>
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
-                <span>付款方式：{{ selectedOrder?.paymentService }}</span>
+                <!-- TODO -->
+                <!-- <span>付款方式：{{ selectedOrder?.paymentService }}</span> -->
+                <span>付款方式：xxx</span>
                 <div style="margin-left: auto">
-                    <span style="margin-right: 20px;">合计：{{ selectedOrder?.totalPrice }}</span>
+                    <span style="margin-right: 20px;">合计：{{ selectedOrder?.total_price }}</span>
                 </div>
             </div>
         </div>
@@ -63,48 +65,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
-
-// TODO: consider factoring out these interfaces
-interface IProduct {
-    id: Number,
-    name: String,
-    // description: String,
-    image: String,
-    // price: Number,
-    // created_at: Date,
-    // updated_at: Date,
-}
-
-interface IOrder {
-    id: Number,
-    order_id: String,
-    status: String,
-    address: String,
-    products: Array<IProduct>,
-    totalPrice: Number,
-    paymentService: String,
-    created_at: Date,
-}
+import { getDetailOrder, getOrders } from '@/api';
+import type { AxiosResponse } from 'axios';
+import type { OrderDetailResponse, OrderResponse } from '@/api/schemas';
 
 const total = ref(100)
 const handlePageChange = function(page: Number) {
     console.log("page changed: " + page)
 }
 
-// TODO: add a computed property that maps orders to orderDisplays
-const orders: Ref<Array<IOrder>> = ref([
-    { id: 1, order_id: "ABC12345", status: "运输中", created_at: new Date(), address: "scut1", products: [{id: 1, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-    { id: 2, order_id: "ABC12346", status: "交易成功", created_at: new Date(), address: "scut2", products: [{id: 2, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-    { id: 3, order_id: "ABC12347", status: "交易成功", created_at: new Date(), address: "scut3", products: [{id: 3, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-    { id: 4, order_id: "ABC12348", status: "交易成功", created_at: new Date(), address: "scut4", products: [{id: 4, name: "123", image: "http://empty"}], totalPrice: 12345, paymentService: "微信支付" },
-])
+const orders: Ref<Array<OrderDetailResponse>> = ref([])
 
-const selectedOrder: Ref<IOrder | undefined> = ref()
+const selectedOrder: Ref<OrderDetailResponse | undefined> = ref()
 const orderDialogVisible = ref(false)
+
+onMounted(async () => {
+    try {
+        const orders_response = await getOrders() as AxiosResponse<{
+            total: Number;
+            page: Number;
+            size: Number;
+            pages: Number;
+            items: Array<OrderResponse>;
+        }>
+        orders.value = await Promise.all(
+            orders_response.data.items.map(
+                async o => {
+                    const data = (await getDetailOrder(o.id) as AxiosResponse<OrderDetailResponse>).data
+                    data.created_at = new Date(data.created_at)
+                    data.updated_at = new Date(data.updated_at)
+                    return data
+                }
+            )
+        )
+    } catch (err) {
+        console.error(err)
+    }
+})
 </script>
 
 <style scoped>

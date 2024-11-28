@@ -122,3 +122,31 @@ export interface PaymentServiceResponse {
     id: Number,
     name: String
 }
+
+export interface OrderResponse {
+    id: Number,
+    user_id: Number,
+    total_price: Number,
+    status: Number,
+    address_id: Number,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface OrderItemResponse {
+    id: Number,
+    order_id: Number,
+    good_id: Number,
+    good: GoodResponse,
+    style_id: Number,
+    style: StyleResponse,
+    count: Number,
+    price: Number,
+    created_at: Date,
+    updated_at: Date
+}
+
+export interface OrderDetailResponse extends OrderResponse {
+    address: AddressResponse,
+    order_items: Array<OrderItemResponse>
+}
