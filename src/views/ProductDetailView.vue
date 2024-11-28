@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <el-divider style="margin: 5px;" />
-                <div v-if="product?.styles"
+                <div v-if="product?.styles !== null && product?.styles.length !== 0"
                     style="margin-left: 10px; display: inline-flex; align-items: center; margin-left: 10px;">
                     <span style="font-family: sans-serif; margin-right: 10px;">选择款式</span>
                     <el-image :src="selectedStyle?.image_id" :alt="selectedStyle?.name"
@@ -99,7 +99,7 @@
                         </template>
                     </el-image>
                     <el-select v-model="selectedStyleIdx" size="large" style="width: 250px;">
-                        <el-option v-for="style, idx in product.styles" :key="style.id" :label="style.name"
+                        <el-option v-for="style, idx in product?.styles" :key="style.id" :label="style.name"
                             :value="idx" />
                     </el-select>
                 </div>
