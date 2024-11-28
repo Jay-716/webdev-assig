@@ -133,3 +133,10 @@ export function cartBuy(data: schemas.CartBuyRequest) {
     data: data
   })
 }
+
+export function getNotifs() {
+  return request({
+    method: 'get',
+    url: '/notif'
+  })
+}

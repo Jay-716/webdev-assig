@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef, Teleport, Transition, reactive, onUnmounted, type Ref } from 'vue';
 import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets } from '@element-plus/icons-vue';
-import { getUser } from '@/api';
+import { getNotifs, getUser } from '@/api';
 import type { AxiosResponse } from 'axios';
-import type { UserResponse } from '@/api/schemas';
+import type { NotifiResponse, UserResponse } from '@/api/schemas';
 
 const userLoggedIn = ref(true)
 const user: Ref<UserResponse | undefined> = ref()
 const cartEmpty = ref(true)
 const searchText = ref('');
-const notifications = ref([
-    { id: 1, title: "欢迎加入1", content: "testtesttesttesttesttesttesttest", created_at: new Date() },
-    { id: 2, title: "欢迎加入2", content: "testtesttesttesttesttesttesttest", created_at: new Date() },
-    { id: 3, title: "欢迎加入3", content: "testtesttesttesttesttesttesttest", created_at: new Date() },
-])
+const notifications: Ref<Array<NotifiResponse>> = ref([])
 
 const avatarErrorHandler = function() {
     console.warn("Failed to load avatar, url:", user.value?.avatar_id)
@@ -131,6 +127,8 @@ onMounted(async () => {
     try {
         const me = await getUser() as AxiosResponse<UserResponse>
         user.value = me.data
+        const notifs = await getNotifs() as AxiosResponse<Array<NotifiResponse>>
+        notifications.value = notifs.data
     } catch (err) {
         console.error(err)
     }
@@ -193,11 +191,11 @@ onUnmounted(() => {
                 @mouseenter="notifPopupState.handleMouseEnter" @mouseleave="notifPopupState.handleMouseLeave">
                 <div class="popup notification-popup">
                     <div v-if="notifications.length !== 0" class="notif-list">
-                        <div v-for="notif in notifications" :key="notif.id" class="notif-item">
+                        <div v-for="notif in notifications" :key="notif.id as PropertyKey" class="notif-item">
                             <div class="notif-text">
                                 <span style="font-size: medium;">{{ notif.title }}</span>
                                 <span style="font-size: 14px; color: #333333aa;">{{ notif.content }}</span>
-                                <span style="font-size: 14px; color: #333333aa;">{{ notif.created_at.toDateString()
+                                <span style="font-size: 14px; color: #333333aa;">{{ new Date(notif.created_at).toLocaleDateString()
                                     }}</span>
                             </div>
                             <el-divider style="margin: 3px;" />

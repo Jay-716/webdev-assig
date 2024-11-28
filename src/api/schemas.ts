@@ -195,3 +195,10 @@ export interface CartBuyRequest {
     cart_item_ids: Array<Number>,
     address_id: Number
 }
+
+export interface NotifiResponse {
+    id: Number,
+    title: String,
+    content: String,
+    created_at: Date
+}
