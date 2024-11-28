@@ -28,7 +28,7 @@
                         <div
                             style="display: flex; align-items: last baseline; margin-top: auto; font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a;">
                             <span style="flex: 1;">订单号：{{ order.id }}</span>
-                            <span style="flex: 1;">下单时间：{{ order.created_at.toDateString() }}</span>
+                            <span style="flex: 1;">下单时间：{{ order.created_at.toLocaleDateString() }}</span>
                         </div>
                     </div>
                     <div class="order-status">
@@ -47,9 +47,10 @@
             <div style="display: flex; align-items: center; padding: 5px 10px;">
                 <span>收货地址：{{ selectedOrder?.address.detail }}</span>
             </div>
-            <el-table :data="selectedOrder?.order_items.map(o => o.good)">
+            <el-table :data="goodView">
                 <el-table-column property="name" label="商品名" width="250" />
-                <el-table-column property="description" label="商品详情" width="400" />
+                <el-table-column property="style_name" label="商品详情" width="350" />
+                <el-table-column property="count" label="数量" />
                 <el-table-column property="price" label="价格" />
             </el-table>
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
@@ -65,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
@@ -81,6 +82,14 @@ const handlePageChange = function(page: Number) {
 const orders: Ref<Array<OrderDetailResponse>> = ref([])
 
 const selectedOrder: Ref<OrderDetailResponse | undefined> = ref()
+const goodView = computed(() => {
+    return selectedOrder.value?.order_items.map(g => ({
+        name: g.good.name,
+        style_name: g.style?.name || g.good.description,
+        count: g.count,
+        price: g.price
+    }))
+})
 const orderDialogVisible = ref(false)
 
 onMounted(async () => {

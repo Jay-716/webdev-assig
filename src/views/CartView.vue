@@ -6,7 +6,8 @@
         <div style="padding: 5px 150px;">
             <div class="product-grid">
                 <div v-for="product, idx in products" :key="product.id as PropertyKey" class="product-box">
-                    <el-image :src="product.good.image_id" :alt="product.good.name" style="width: 175px; aspect-ratio: 1;">
+                    <el-image :src="product.good.image_id" :alt="product.good.name"
+                        style="width: 175px; aspect-ratio: 1;">
                         <template #placeholder>
                             <div class="product-image-slot">
                                 <span>LOADING...</span>
@@ -21,12 +22,20 @@
                         </template>
                     </el-image>
                     <div class="product-info">
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{ product.good.name }}</span>
+                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{ product.good.name
+                            }}</span>
                         <span
-                            style="font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{ product.good.description }}</span>
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px; margin-top: auto;">{{ product.good.price }}</span>
+                            style="font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{
+                            product.good.description }}</span>
+                        <span
+                            style="font-family: sans-serif; font-size: 14px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{
+                            product.style?.name }} x {{ product.count }}</span>
+                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px; margin-top: auto;">{{
+                            product.good.price }}</span>
                     </div>
-                    <el-checkbox size="large" v-model="selection[idx]" style="margin: 15px; margin-left: auto;" />
+                    <div style="margin: 15px; margin-left: auto; display: flex; flex-direction: column; align-items: center;">
+                        <el-checkbox size="large" v-model="selection[idx]" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,7 +57,7 @@
             <div style="display: flex; align-items: center; padding: 5px 10px;">
                 <span>收货地址：</span>
                 <el-select v-model="address" style="width: 300px;">
-                    <el-option v-for="a in addresses" :key="a.id" :label="a.detail" :value="a.id"/>
+                    <el-option v-for="a in addresses" :key="a.id" :label="a.detail" :value="a.id" />
                 </el-select>
             </div>
             <el-table :data="selectedProducts">
@@ -59,7 +68,8 @@
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
                 <span>付款方式：</span>
                 <el-select v-model="paymentService" style="width: 200px">
-                    <el-option v-for="service in paymentServices" :key="service.id" :label="service.name" :value="service.id" />
+                    <el-option v-for="service in paymentServices" :key="service.id" :label="service.name"
+                        :value="service.id" />
                 </el-select>
                 <div style="margin-left: auto">
                     <span style="margin-right: 20px;">合计：{{ totalPrice }}</span>
@@ -161,7 +171,8 @@ onMounted(async () => {
   height: 100%;
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
-  font-size: 30px;
+  font-size: 16px;
+  font-family: sans-serif;
 }
 .product-info {
     display: flex;
