@@ -9,7 +9,11 @@
                 <el-avatar :size="150" :src="user?.avatar_id" @error="avatarErrorHandler" style="margin: 10px;">
                     <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                 </el-avatar>
-                <el-form :model="userForm" label-width="auto" style="width: 300px; max-width: 600px; margin: 20px">
+              <el-tabs v-model="activeTabName" class="demo-tabs">
+                <el-tab-pane label="我的信息" name="info" />
+                <el-tab-pane label="地址管理" name="addr" />
+              </el-tabs>
+                <el-form v-if="activeTabName === 'info'" :model="userForm" label-width="auto" style="width: 300px; max-width: 600px; margin: 20px">
                     <el-form-item label="用户名">
                         <el-input v-model="userForm.username" disabled/>
                     </el-form-item>
@@ -30,6 +34,21 @@
                         <el-button @click="handleLogout">退出登录</el-button>
                     </el-form-item>
                 </el-form>
+                <div v-else class="flex-col" style="gap: 5px; width: auto; height: 100%; width: 50%;">
+                  <div v-for="address in addresses" :key="address.id as PropertyKey" class="address-box" style="width: 100%;">
+                    <div>
+                      <span>{{address.name}}</span>
+                      <span style="margin-left: 20px;">{{address.comment}}</span>
+                    </div>
+                    <div class="flex-row" style="align-items: center;">
+                      <div style="color: #333333aa">{{address.detail}}</div>
+                      <el-button text size="small" style="margin-left: auto;" @click="handleDeleteAddress(address.id)">删除</el-button>
+                    </div>
+                  </div>
+                  <div class="flex-row justc item-center" style="margin-top: 10px;">
+                    <el-button type="primary" @click="addressPopupVisible = true">添加</el-button>
+                  </div>
+                </div>
             </div>
             <el-divider direction="vertical" style="height: 80%;" />
             <div style="align-self: center; padding: 20px; width: 600px; display: flex; flex-direction: column; align-items: baseline;">
@@ -55,11 +74,32 @@
             </div>
         </div>
     </div>
+  <el-dialog v-model="addressPopupVisible" title="添加收货地址" width="500">
+    <div class="flex-col">
+      <div class="flex-col item-center" style="padding: 5px 10px;">
+        <el-form v-model="newAddress" label-width="auto" style="width: 100%">
+          <el-form-item label="收货姓名">
+            <el-input v-model="newAddress.name" />
+          </el-form-item>
+          <el-form-item label="收货电话号码">
+            <el-input v-model="newAddress.phone_number" />
+          </el-form-item>
+          <el-form-item label="收货详细地址">
+            <el-input v-model="newAddress.detail" type="textarea"/>
+          </el-form-item>
+        </el-form>
+        <div class="flex-row item-center">
+            <el-button @click="addressPopupVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleAddAddress">添加</el-button>
+        </div>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { getUser, getUserProfile, updateUser } from '@/api';
-import type { UserProfileResponse, UserResponse, UserUpdate } from '@/api/schemas';
+import {addAddress, deleteAddress, getAddresses, getUser, getUserProfile, updateUser} from '@/api';
+import type {AddressResponse, UserProfileResponse, UserResponse, UserUpdate} from '@/api/schemas';
 import HomeHeader from '@/components/HomeHeader.vue';
 import router from '@/router';
 import type { AxiosResponse } from 'axios';
@@ -83,7 +123,6 @@ const userForm = reactive({
 })
 
 const handleSubmit = async function() {
-    console.log('submit', userForm)
     try {
         const response = await updateUser(userForm as UserUpdate) as AxiosResponse<UserResponse>
         Object.assign(userForm, response.data)
@@ -100,9 +139,47 @@ const handleLogout = function() {
         name: 'login'
     })
 }
+const handleDeleteAddress = async function (address_id: Number) {
+  try {
+    await deleteAddress(address_id)
+    await getAddrs()
+  } catch (err) {
+    console.error(err)
+  }
+}
+const handleAddAddress = async function () {
+  await addAddress(newAddress.value)
+  await getAddrs()
+  addressPopupVisible.value = false
+}
 
+const activeTabName = ref('info')
 const userProfile: Ref<UserProfileResponse | undefined> = ref()
+const addresses: Ref<Array<AddressResponse>> = ref([])
 const timelineEvents: Ref<Array<Array<String>>> = ref([])
+const addressPopupVisible = ref(false)
+const newAddress = ref({
+  name: '',
+  phone_number: '',
+  detail: '',
+  comment: '',
+  postcode: ''
+})
+
+const getAddrs = async () => {
+  try {
+    const addresses_response = await getAddresses() as AxiosResponse<{
+      total: Number;
+      page: Number;
+      size: Number;
+      pages: Number;
+      items: Array<AddressResponse>;
+    }>
+    addresses.value = addresses_response.data.items
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 onMounted(async () => {
     try {
@@ -112,6 +189,7 @@ onMounted(async () => {
         const profile = await getUserProfile() as AxiosResponse<UserProfileResponse>
         userProfile.value = profile.data
         timelineEvents.value = profile.data.timeline
+        await getAddrs()
     } catch (err) {
         console.error(err)
     }
@@ -137,5 +215,10 @@ onMounted(async () => {
 .el-col >>> .el-statistic__head {
     font-family: sans-serif;
     font-size: medium;
+}
+
+.address-box {
+  font-family: sans-serif;
+  font-size: 1em;
 }
 </style>

@@ -148,3 +148,18 @@ export function getNotifs() {
     url: '/notif'
   })
 }
+
+export function deleteAddress(address_id: Number) {
+  return request({
+    method: 'delete',
+    url: `/address/${address_id}`
+  })
+}
+
+export function addAddress(data: schemas.AddAddressRequest) {
+  return request({
+    method: 'post',
+    url: '/address',
+    data: data
+  })
+}

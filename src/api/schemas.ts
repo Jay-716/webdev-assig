@@ -212,3 +212,11 @@ export interface NotifiResponse {
     content: String,
     created_at: Date
 }
+
+export interface AddAddressRequest {
+    postcode: String | null,
+    detail: String,
+    name: String,
+    phone_number: String,
+    comment: String | null
+}

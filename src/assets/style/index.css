@@ -5,3 +5,22 @@ body,
     padding: 0;
     margin: 0;
 }
+
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.item-center {
+    align-items: center;
+}
+
+.justc {
+    justify-content: center;
+}
