@@ -23,8 +23,18 @@ export interface RegisterResponse {
     avatar_id: String,
     bio: String,
     role: Number,
+    birthday: Date,
     created_at: Date,
     updated_at: Date
+}
+
+export interface UserUpdate {
+    username: String | null,
+    phone_number: String | null,
+    email: String | null,
+    gender: Number | null,
+    bio: String | null,
+    birthday: Date | null,
 }
 
 export interface UserResponse {
@@ -36,7 +46,7 @@ export interface UserResponse {
     avatar_id: String | null,
     bio: String | null,
     role: Number,
-    birtyday: Date,
+    birthday: Date,
     created_at: Date,
     updated_at: Date
 }

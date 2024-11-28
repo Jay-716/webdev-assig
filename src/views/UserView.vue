@@ -27,7 +27,7 @@
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="handleSubmit">提交</el-button>
-                        <el-button>取消</el-button>
+                        <el-button @click="handleLogout">退出登录</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -58,10 +58,12 @@
 </template>
 
 <script setup lang="ts">
-import { getUser, getUserProfile } from '@/api';
+import { getUser, getUserProfile, updateUser } from '@/api';
 import type { UserProfileResponse, UserResponse } from '@/api/schemas';
 import HomeHeader from '@/components/HomeHeader.vue';
+import router from '@/router';
 import type { AxiosResponse } from 'axios';
+import { ElMessage } from 'element-plus';
 import { type Ref } from 'vue';
 
 const avatarErrorHandler = function() {
@@ -76,11 +78,27 @@ const userForm = reactive({
     phone_number: user.value?.phone_number,
     email: user.value?.email,
     bio: user.value?.bio,
-    birthday: user.value?.birtyday,
+    birthday: user.value?.birthday,
+    gender: user.value?.gender
 })
 
-const handleSubmit = function() {
+const handleSubmit = async function() {
     console.log('submit', userForm)
+    try {
+        const response = await updateUser(userForm) as AxiosResponse<UserResponse>
+        Object.assign(userForm, response.data)
+        ElMessage({
+            type: 'success',
+            message: '更新用户信息成功'
+        })
+    } catch (err) {
+        console.error(err)
+    }
+}
+const handleLogout = function() {
+    router.replace({
+        name: 'login'
+    })
 }
 
 const userProfile: Ref<UserProfileResponse | undefined> = ref()

@@ -21,6 +21,14 @@ export function register(data: schemas.RegisterForm) {
   })
 }
 
+export function updateUser(data: schemas.UserUpdate) {
+  return request({
+    method: 'patch',
+    url: '/auth/me',
+    data: data
+  })
+}
+
 export function getUser() {
   return request({
     method: 'get',
