@@ -32,13 +32,14 @@
                         </div>
                     </div>
                     <div class="order-status">
-                        <el-text type="success" size="large">{{ order.status }}</el-text>
+                        <!-- This works. Stupid ts. -->
+                        <el-text type="success" size="large">{{ statusMap[order.status] }}</el-text>
                         <el-text size="large">{{ order.total_price }}</el-text>
                     </div>
                 </div>
             </div>
             <div style="padding-bottom: 20px;">
-                <el-pagination layout="prev, pager, next" :total="total" @current-change="handlePageChange" />
+                <el-pagination layout="prev, pager, next" :page-count="pages" page-size="5" @current-change="handlePageChange" />
             </div>
         </div>
     </div>
@@ -56,7 +57,7 @@
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
                 <!-- TODO -->
                 <!-- <span>付款方式：{{ selectedOrder?.paymentService }}</span> -->
-                <span>付款方式：xxx</span>
+                <span>付款方式：支付宝</span>
                 <div style="margin-left: auto">
                     <span style="margin-right: 20px;">合计：{{ selectedOrder?.total_price }}</span>
                 </div>
@@ -74,9 +75,12 @@ import { getDetailOrder, getOrders } from '@/api';
 import type { AxiosResponse } from 'axios';
 import type { OrderDetailResponse, OrderResponse } from '@/api/schemas';
 
-const total = ref(100)
-const handlePageChange = function(page: Number) {
-    console.log("page changed: " + page)
+const page = ref(1)
+const pages = ref(1)
+const handlePageChange = function(p: Number) {
+    console.log("page changed: " + p)
+    page.value = p as number
+    loadOrders()
 }
 
 const orders: Ref<Array<OrderDetailResponse>> = ref([])
@@ -92,9 +96,20 @@ const goodView = computed(() => {
 })
 const orderDialogVisible = ref(false)
 
-onMounted(async () => {
+// const statusMap = {
+//     0: '未支付',
+//     1: '已支付',
+//     2: '已发货',
+//     3: '交易成功'
+// }
+const statusMap = {
+    0: '已支付',
+    1: '交易成功'
+}
+
+const loadOrders = async () => {
     try {
-        const orders_response = await getOrders() as AxiosResponse<{
+        const orders_response = await getOrders(5, page.value) as AxiosResponse<{
             total: Number;
             page: Number;
             size: Number;
@@ -111,9 +126,14 @@ onMounted(async () => {
                 }
             )
         )
+        pages.value = orders_response.data.pages as number
     } catch (err) {
         console.error(err)
     }
+}
+
+onMounted(async () => {
+    loadOrders()
 })
 </script>
 

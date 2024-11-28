@@ -84,10 +84,14 @@ export function getPaymentServices() {
   })
 }
 
-export function getOrders() {
+export function getOrders(size?: Number, page?: Number) {
   return request({
     method: 'get',
-    url: '/order'
+    url: '/order',
+    params: {
+      size,
+      page
+    }
   })
 }
 
