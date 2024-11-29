@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef, Teleport, Transition, reactive, onUnmounted, type Ref } from 'vue';
-import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets } from '@element-plus/icons-vue';
+import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets, Management } from '@element-plus/icons-vue';
 import { getNotifs, getUser } from '@/api';
 import type { AxiosResponse } from 'axios';
 import type { NotifiResponse, UserResponse } from '@/api/schemas';
@@ -163,6 +163,12 @@ onUnmounted(() => {
                     <Tickets />
                 </el-icon>
                 <h2>订单</h2>
+            </RouterLink>
+            <RouterLink to="/store" v-if="storeLogin">
+                <el-icon>
+                    <Management />
+                </el-icon>
+                <h2>管理</h2>
             </RouterLink>
             <div ref="notificationBox" @mouseenter="notifPopupState.handleMouseEnter"
                 @mouseleave="notifPopupState.handleMouseLeave">
