@@ -250,3 +250,11 @@ export function deleteGood(good_id: Number) {
     url: `/good/${good_id}`
   })
 }
+
+export function updateGood(good_id: Number, data: any) {
+  return request({
+    method: 'put',
+    url: `/good/full/${good_id}`,
+    data: data
+  })
+}

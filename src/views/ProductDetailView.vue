@@ -48,10 +48,14 @@
                 </div>
                 <div
                     style="box-sizing: border-box; flex: 1; height: 100%; display: flex; flex-direction: column; align-items: end; padding: 10px;">
-                    <div style="margin-top: auto;">
+                    <div v-if="!userStore.storeLogin" style="margin-top: auto;">
                         <el-button size="large" style="width: 100%;" @click="handleAddToCart">加入购物车</el-button>
                         <el-button size="large" type="primary" @click="handleDirectBuy"
                             style="margin-top: 5px; width: 100%; margin-left: 0;">立即购买</el-button>
+                    </div>
+                    <div v-else>
+                        <el-button size="large" type="primary" @click="updateDialogVisible = true"
+                            style="margin-top: 5px; width: 100%; margin-left: 0;">更新商品</el-button>
                     </div>
                 </div>
             </div>
@@ -104,14 +108,15 @@
                     </el-select>
                 </div>
             </div>
-            <el-divider style="margin: 5px;"/>
+            <el-divider style="margin: 5px;" />
             <div id="detail-box" style="margin: 10px 0 10px 10px;">
                 <div style="font-family: sans-serif; font-size: 1.5em;">商品详情</div>
                 <div v-for="detail in product?.details" :key="detail.id as PropertyKey">
                     <div v-if="detail.text !== null && detail.text.length !== 0">
                         {{ detail.text }}
                     </div>
-                    <el-image v-else :src="detail.image_id" style="height: auto; width: auto; max-height: 1000px; max-width: 100%;">
+                    <el-image v-else :src="detail.image_id"
+                        style="height: auto; width: auto; max-height: 1000px; max-width: 100%;">
                         <template #placeholder>
                             <div class="el-image-slot">
                                 <span>LOADING...</span>
@@ -129,17 +134,55 @@
             </div>
         </div>
     </div>
+    <el-dialog v-model="updateDialogVisible" title="更新商品信息" width="700">
+        <div class="flex-col">
+            <div class="flex-col item-center" style="padding: 5px 10px;">
+                <el-form v-model="product" label-width="auto" style="width: 100%">
+                    <el-form-item label="商品名">
+                        <el-input v-model="product!.name" />
+                    </el-form-item>
+                    <el-form-item label="商品简介">
+                        <el-input v-model="product!.description" type="textarea" />
+                    </el-form-item>
+                    <el-form-item label="商品价格">
+                        <el-input v-model="product!.price" />
+                    </el-form-item>
+                    <div class="flex-row">
+                        <div class="detail-edit-label">商品详情</div>
+                        <div class="flex-col detail-edit-box">
+                            <div v-for="detail, idx in product?.details" class="flex-row detail-edit-item">
+                                <el-input v-if="detail.text !== null" v-model="product!.details[idx].text">
+                                    {{ detail.text }}
+                                </el-input>
+                                <img v-else :src="`${baseUrl}/file/download/${detail.image_id}`" />
+                                <div style="margin-left: auto;" class="flex-row item-center detail-edit-buttons">
+                                    <el-button size="small" link @click="handleInsertBelow(detail.id)">插入</el-button>
+                                    <el-button size="small" link @click="handleDeleteItem(detail.id)">删除</el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </el-form>
+                <div class="flex-row item-center">
+                    <el-button @click="updateDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="handleUpdateGood">确认</el-button>
+                </div>
+            </div>
+        </div>
+    </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, type Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
-import { addToCart, directBuy, getAddresses, getGoodDetail } from '@/api';
+import { addToCart, directBuy, getAddresses, getGoodDetail, updateGood } from '@/api';
 import type { AxiosResponse } from 'axios';
-import type { AddressResponse, GoodDetailResponse } from '@/api/schemas';
+import type { AddressResponse, DetailResponse, GoodDetailResponse } from '@/api/schemas';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import { useUserStore } from '@/store/user';
+import { baseUrl } from '@/config';
 
 const { id } = defineProps({
     id: {
@@ -147,6 +190,8 @@ const { id } = defineProps({
         required: true
     }
 })
+
+const userStore = useUserStore()
 
 const product: Ref<GoodDetailResponse | null> = ref(null)
 const selectedStyleIdx = ref(product.value?.styles?.length || 0)
@@ -206,6 +251,44 @@ const handleDirectBuy = async () => {
     }
 }
 
+let tempDetailId = -1
+const updateDialogVisible = ref(false)
+const handleUpdateGood = async () => {
+    try {
+        const styles = product.value?.styles
+        product.value!.styles = null!
+        await updateGood(product.value!.id, product.value)
+        product.value!.styles = styles!
+        updateDialogVisible.value = false
+        ElMessage({
+            type: 'success',
+            message: '更新成功'
+        })
+    } catch (err) {
+        console.error(err)
+        ElMessage({
+            type: 'error',
+            message: '更新失败'
+        })
+    }
+}
+const handleDeleteItem = (detail_id: Number) => {
+    if (product.value?.details) {
+        product.value.details = product.value?.details.filter(d => d.id !== detail_id)
+    }
+}
+const handleInsertBelow = (detail_id: Number) => {
+    if (!product.value?.details)
+        return
+    const idx = product.value.details.findIndex(d => d.id == detail_id)
+    product.value.details.splice(idx, 0, {
+        id: tempDetailId--,
+        text: '',
+        image_id: null,
+        good_id: -1
+    })
+}
+
 onMounted(async () => {
     try {
         product.value = (await getGoodDetail(id) as AxiosResponse<GoodDetailResponse>).data
@@ -244,5 +327,20 @@ onMounted(async () => {
 
 #detail-box div, span, a {
     margin: 5px;
+}
+
+.detail-edit-label {
+    width: 5rem;
+}
+.detail-edit-box {
+    width: 100%;
+    gap: 0.3rem;
+}
+.detail-edit-item {
+    width: 100%;
+    max-height: 200rem;
+}
+.detail-edit-buttons .el-button {
+    margin-left: 0.3rem;
 }
 </style>
