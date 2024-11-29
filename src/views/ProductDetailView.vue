@@ -48,12 +48,12 @@
                 </div>
                 <div
                     style="box-sizing: border-box; flex: 1; height: 100%; display: flex; flex-direction: column; align-items: end; padding: 10px;">
-                    <div v-if="!userStore.storeLogin" style="margin-top: auto;">
+                    <div v-if="!storeLogin" style="margin-top: auto;">
                         <el-button size="large" style="width: 100%;" @click="handleAddToCart">加入购物车</el-button>
                         <el-button size="large" type="primary" @click="handleDirectBuy"
                             style="margin-top: 5px; width: 100%; margin-left: 0;">立即购买</el-button>
                     </div>
-                    <div v-else>
+                    <div v-else style="margin-top: auto;">
                         <el-button size="large" type="primary" @click="updateDialogVisible = true"
                             style="margin-top: 5px; width: 100%; margin-left: 0;">更新商品</el-button>
                     </div>
@@ -181,7 +181,6 @@ import type { AxiosResponse } from 'axios';
 import type { AddressResponse, DetailResponse, GoodDetailResponse } from '@/api/schemas';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
-import { useUserStore } from '@/store/user';
 import { baseUrl } from '@/config';
 
 const { id } = defineProps({
@@ -190,8 +189,7 @@ const { id } = defineProps({
         required: true
     }
 })
-
-const userStore = useUserStore()
+const storeLogin = ref(localStorage.getItem('store') === '1')
 
 const product: Ref<GoodDetailResponse | null> = ref(null)
 const selectedStyleIdx = ref(product.value?.styles?.length || 0)

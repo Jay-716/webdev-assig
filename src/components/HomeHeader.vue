@@ -4,11 +4,10 @@ import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, 
 import { getNotifs, getUser } from '@/api';
 import type { AxiosResponse } from 'axios';
 import type { NotifiResponse, UserResponse } from '@/api/schemas';
-import { useUserStore } from '@/store/user';
 
 const userLoggedIn = ref(true)
+const storeLogin = ref(localStorage.getItem('store') === '1')
 const user: Ref<UserResponse | undefined> = ref()
-const userStore = useUserStore()
 const cartEmpty = ref(true)
 const searchText = ref('');
 const notifications: Ref<Array<NotifiResponse>> = ref([])
@@ -152,14 +151,14 @@ onUnmounted(() => {
         </RouterLink>
         <el-input placeholder="搜索" class="search-bar" :prefix-icon="Search" v-model="searchText" />
         <nav class="nav-links">
-            <RouterLink to="/cart" v-if="!userStore.storeLogin">
+            <RouterLink to="/cart" v-if="!storeLogin">
                 <el-icon>
                     <ShoppingCart v-if="cartEmpty" />
                     <ShoppingCartFull v-else />
                 </el-icon>
                 <h2>购物车</h2>
             </RouterLink>
-            <RouterLink to="/order" v-if="!userStore.storeLogin">
+            <RouterLink to="/order" v-if="!storeLogin">
                 <el-icon>
                     <Tickets />
                 </el-icon>

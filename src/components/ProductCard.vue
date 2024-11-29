@@ -38,7 +38,7 @@ const handleCardClick = function(event: Event) {
     name: 'product-detail',
     params: {
       id: product.id
-    }
+    },
   })
 }
 const handleButtonClick = function(event: Event) {

@@ -146,7 +146,7 @@ const handleGoodDetailClick = () => {
         name: 'product-detail',
         params: {
             id: goodId.value
-        }
+        },
     })
 }
 const handleDeleteGoodClick = async () => {

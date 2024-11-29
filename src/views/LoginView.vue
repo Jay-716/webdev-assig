@@ -143,8 +143,10 @@ const loginOrRegister = async function () {
     await userLogin()
     if (isStoreLogin.value) {
         await storeLogin()
+        localStorage.setItem('store', '1')
         await router.replace({ name: 'store' })
     } else {
+        localStorage.setItem('store', '0')
         await router.replace({ name: 'home' })
     }
 }
