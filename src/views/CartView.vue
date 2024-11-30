@@ -73,7 +73,7 @@
                 </el-select>
                 <div style="margin-left: auto">
                     <span style="margin-right: 20px;">合计：{{ totalPrice }}</span>
-                    <el-button type="primary" @click="handlePay">支付</el-button>
+                    <el-button type="primary" @click="handlePay">确认下单</el-button>
                 </div>
             </div>
         </div>
@@ -114,10 +114,6 @@ const handlePay = async () => {
             address_id: address.value
         })
         purchaseDialogVisible.value = false
-        ElMessage({
-            type: 'success',
-            message: '支付成功'
-        })
         ElMessage({
             type: 'success',
             message: '购买成功'

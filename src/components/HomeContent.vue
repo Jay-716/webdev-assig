@@ -34,7 +34,7 @@
   </div>
   <div class="product-container">
     <div class="product-card" v-for="product in products" :key="product.id as PropertyKey">
-      <ProductCard :product="product" />
+      <ProductCard :product="product" nobutton/>
     </div>
   </div>
 </template>
