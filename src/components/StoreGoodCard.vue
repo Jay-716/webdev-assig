@@ -1,7 +1,7 @@
 <template>
     <div class="card-root">
         <div class="good-box flex-row">
-            <img :src="`${baseUrl}/file/download/${good?.image_id}`" :alt="good?.name as string" class="good-image" />
+            <img :src="`${baseUrl}/file/download?key=${good?.image_id}`" :alt="good?.name as string" class="good-image" />
             <div class="flex-col detail-box sans-font">
                 <div class="good-name">{{ good?.name }}</div>
                 <div class="good-desc">{{ good?.description }}</div>

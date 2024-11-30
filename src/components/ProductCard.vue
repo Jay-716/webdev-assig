@@ -1,6 +1,6 @@
 <template>
     <div class="product-card" ref="productCard" @click="handleCardClick">
-        <img :src="product.image" :alt="product.name" class="product-image" />
+        <img :src="`${baseUrl}/file/download?key=${product.image_id}`" :alt="product.name" class="product-image" />
         <div class="product-info">
             <h3 class="product-name">{{ product.name }}</h3>
             <span class="product-description">{{ product.description }}</span>
@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import router from '@/router';
 import { onMounted, useTemplateRef } from 'vue';
+import { baseUrl } from '@/config';
 
 const { product, height, width, nobutton } = defineProps({
     product: {

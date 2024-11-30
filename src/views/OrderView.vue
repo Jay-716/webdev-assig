@@ -7,7 +7,7 @@
             <div class="order-list">
                 <div v-for="order in orders" :key="order.id as PropertyKey" class="order-box"
                     @click="selectedOrder = order; orderDialogVisible = true">
-                    <el-image :src="order.order_items[0].good.image_id" :alt="order.order_items[0].good.name"
+                    <el-image :src="`${baseUrl}/file/download?key=${order.order_items[0].good.image_id}`" :alt="order.order_items[0].good.name"
                         style="width: 100px; aspect-ratio: 1;">
                         <template #placeholder>
                             <div class="order-image-slot">
@@ -82,6 +82,7 @@ import { getDetailOrder, getOrders, getPaymentServices, payOrder } from '@/api';
 import type { AxiosResponse } from 'axios';
 import type { OrderDetailResponse, OrderResponse, PaymentServiceResponse } from '@/api/schemas';
 import { ElMessage } from 'element-plus';
+import { baseUrl } from '@/config';
 
 const page = ref(1)
 const pages = ref(1)

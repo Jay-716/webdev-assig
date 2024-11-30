@@ -6,7 +6,7 @@
         <div style="box-sizing: border-box; height: 100%; display: flex; align-items: center; justify-content: center;">
             <div
                 style="padding: 20px 20px 20px 50px; width: 400px; display: flex; flex-direction: column; align-items: center">
-                <el-avatar :size="150" :src="user?.avatar_id" @error="avatarErrorHandler" style="margin: 10px;">
+                <el-avatar :size="150" :src="`${baseUrl}/file/download?key=${user?.avatar_id}`" @error="avatarErrorHandler" style="margin: 10px;">
                     <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                 </el-avatar>
               <el-tabs v-model="activeTabName" class="demo-tabs">
@@ -106,6 +106,7 @@ import { useUserStore } from '@/store/user';
 import type { AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus';
 import { type Ref } from 'vue';
+import { baseUrl } from '@/config';
 
 const avatarErrorHandler = function() {
     console.warn("Failed to load avatar, url:", user.value?.avatar_id)

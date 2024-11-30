@@ -2,7 +2,7 @@
   <div class="banner-container">
     <el-carousel trigger="click" :interval="5000">
       <el-carousel-item v-for="banner in banners" :key="banner.id">
-        <el-image :src="banner.image_id" :alt="banner.image_id" class="banner-image">
+        <el-image :src="`${baseUrl}/file/download?key=${banner.image_id}`" :alt="banner.image_id" class="banner-image">
           <template #placeholder>
             <div class="banner-image-slot">
               <span>LOADING...</span>
@@ -46,6 +46,7 @@ import ProductCard from './ProductCard.vue';
 import { getBanner, getRandomGoods, getRandomTags } from '@/api';
 import type { BannerResponse, GoodResponse, TagResponse } from '@/api/schemas';
 import type { AxiosResponse } from 'axios';
+import { baseUrl } from '@/config';
 
 const products: Ref<Array<GoodResponse>> = ref([])
 const banners: Ref<Array<BannerResponse>> = ref([])

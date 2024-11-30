@@ -6,7 +6,7 @@
         <div
             style="box-sizing: border-box; height: 100%; width: 100%; padding: 10px 15%; display: flex; flex-direction: column; align-items: start;">
             <div style="height: 250px; width: 100%; padding: 10px; display: flex; align-items: start;">
-                <el-image :src="product?.image_id" :alt="product?.name" class="product-image">
+                <el-image :src="`${baseUrl}/file/download?key=${product?.image_id}`" :alt="product?.name" class="product-image">
                     <template #placeholder>
                         <div class="product-image-slot">
                             <span>LOADING...</span>
@@ -62,7 +62,7 @@
             <div
                 style="width: 100%; padding: 8px; margin: 5px 10px; display: flex; flex-direction: column; border-radius: 15px; background-color: #eeeeeecc;">
                 <div style="display: flex;">
-                    <el-image :src="product?.store.image_id" :alt="product?.store.name"
+                    <el-image :src="`${baseUrl}/file/download?key=${product?.store.image_id}`" :alt="product?.store.name"
                         style="width: 80px; height: 80px; border-radius: 10px;">
                         <template #placeholder>
                             <div class="store-image-slot">
@@ -87,7 +87,7 @@
                 <div v-if="product?.styles !== null && product?.styles.length !== 0"
                     style="margin-left: 10px; display: inline-flex; align-items: center; margin-left: 10px;">
                     <span style="font-family: sans-serif; margin-right: 10px;">选择款式</span>
-                    <el-image :src="selectedStyle?.image_id" :alt="selectedStyle?.name"
+                    <el-image :src="`${baseUrl}/file/download?key=${selectedStyle?.image_id}`" :alt="selectedStyle?.name"
                         style="width: 50px; height: 50px; border-radius: 8px;">
                         <template #placeholder>
                             <div class="style-image-slot">
@@ -115,7 +115,7 @@
                     <div v-if="detail.text !== null && detail.text.length !== 0">
                         {{ detail.text }}
                     </div>
-                    <el-image v-else :src="detail.image_id"
+                    <el-image v-else :src="`${baseUrl}/file/download?key=${detail.image_id}`"
                         style="height: auto; width: auto; max-height: 1000px; max-width: 100%;">
                         <template #placeholder>
                             <div class="el-image-slot">
@@ -134,7 +134,7 @@
             </div>
         </div>
     </div>
-    <el-dialog v-model="updateDialogVisible" title="更新商品信息" width="700">
+    <el-dialog v-model="updateDialogVisible" title="更新商品信息" width="1000">
         <div class="flex-col">
             <div class="flex-col item-center" style="padding: 5px 10px;">
                 <el-form v-model="product" label-width="auto" style="width: 100%">
@@ -154,7 +154,7 @@
                                 <el-input v-if="detail.text !== null" v-model="product!.details[idx].text">
                                     {{ detail.text }}
                                 </el-input>
-                                <img v-else :src="`${baseUrl}/file/download/${detail.image_id}`" />
+                                <img v-else :src="`${baseUrl}/file/download?key=${detail.image_id}`"/>
                                 <div style="margin-left: auto;" class="flex-row item-center detail-edit-buttons">
                                     <el-button size="small" link @click="handleInsertBelow(detail.id)">插入</el-button>
                                     <el-button size="small" link @click="handleDeleteItem(detail.id)">删除</el-button>
@@ -336,5 +336,10 @@ onMounted(async () => {
 }
 .detail-edit-buttons .el-button {
     margin-left: 0.3rem;
+}
+.detail-edit-item img {
+    max-height: 300rem;
+    max-width: 85%;
+    margin-bottom: 0.3rem;
 }
 </style>

@@ -4,6 +4,7 @@ import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, 
 import { getNotifs, getUser } from '@/api';
 import type { AxiosResponse } from 'axios';
 import type { NotifiResponse, UserResponse } from '@/api/schemas';
+import { baseUrl } from '@/config';
 
 const userLoggedIn = ref(true)
 const storeLogin = ref(localStorage.getItem('store') === '1')
@@ -185,7 +186,7 @@ onUnmounted(() => {
                 <h2>设置</h2>
             </div>
             <RouterLink to="/user" :title="userLoggedIn ? user?.username : '请登录'">
-                <el-avatar v-if="userLoggedIn" :size="40" :src="user?.avatar_id" @error="avatarErrorHandler">
+                <el-avatar v-if="userLoggedIn" :size="40" :src="`${baseUrl}/file/download?key=${user?.avatar_id}`" @error="avatarErrorHandler">
                     <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                 </el-avatar>
                 <el-avatar v-else :size="40" :icon="UserFilled" />

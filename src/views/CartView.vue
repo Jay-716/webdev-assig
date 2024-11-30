@@ -6,7 +6,7 @@
         <div style="padding: 5px 150px;">
             <div class="product-grid">
                 <div v-for="product, idx in products" :key="product.id as PropertyKey" class="product-box">
-                    <el-image :src="product.good.image_id" :alt="product.good.name"
+                    <el-image :src="`${baseUrl}/file/download?key=${product.good.image_id}`" :alt="product.good.name"
                         style="width: 175px; aspect-ratio: 1;">
                         <template #placeholder>
                             <div class="product-image-slot">
@@ -89,6 +89,7 @@ import type { CartItemResponse, AddressResponse, PaymentServiceResponse } from '
 import type { AxiosResponse } from 'axios';
 import { ElMessage } from 'element-plus';
 import router from '@/router';
+import { baseUrl } from '@/config';
 
 const totalPrice = ref(12345)
 const totalPriceDisplay = computed(() => {
