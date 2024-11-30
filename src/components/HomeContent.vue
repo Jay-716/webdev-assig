@@ -154,10 +154,8 @@ onMounted(async () => {
 
 .product-card {
   background-color: #fff;
-  border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden; /* To keep image and content within the card */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 .product-image {
   width: 100%;
