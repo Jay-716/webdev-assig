@@ -235,10 +235,6 @@ const handleDirectBuy = async () => {
         })
         ElMessage({
             type: 'success',
-            message: '支付成功'
-        })
-        ElMessage({
-            type: 'success',
             message: '购买成功'
         })
         router.push({

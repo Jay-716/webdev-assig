@@ -39,7 +39,8 @@
                 </div>
             </div>
             <div style="padding-bottom: 20px;">
-                <el-pagination layout="prev, pager, next" :page-count="pages" page-size="5" @current-change="handlePageChange" />
+                <el-pagination layout="prev, pager, next" :page-count="pages" page-size="5"
+                    @current-change="handlePageChange" />
             </div>
         </div>
     </div>
@@ -57,7 +58,13 @@
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
                 <!-- TODO -->
                 <!-- <span>付款方式：{{ selectedOrder?.paymentService }}</span> -->
-                <span>付款方式：支付宝</span>
+                <div v-if="selectedOrder?.status === 0" class="flex-row item-center pay-box">
+                    <el-select v-model="paymentService" style="width: 200px">
+                        <el-option v-for="service in paymentServices" :key="service.id" :label="service.name"
+                            :value="service.id" />
+                    </el-select>
+                    <el-button type="primary" @click="handlePayClick(selectedOrder.id)">支付</el-button>
+                </div>
                 <div style="margin-left: auto">
                     <span style="margin-right: 20px;">合计：{{ selectedOrder?.total_price }}</span>
                 </div>
@@ -71,9 +78,10 @@ import { computed, onMounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import { Picture as IconPicture } from '@element-plus/icons-vue';
 import HomeHeader from '@/components/HomeHeader.vue';
-import { getDetailOrder, getOrders } from '@/api';
+import { getDetailOrder, getOrders, getPaymentServices, payOrder } from '@/api';
 import type { AxiosResponse } from 'axios';
-import type { OrderDetailResponse, OrderResponse } from '@/api/schemas';
+import type { OrderDetailResponse, OrderResponse, PaymentServiceResponse } from '@/api/schemas';
+import { ElMessage } from 'element-plus';
 
 const page = ref(1)
 const pages = ref(1)
@@ -84,6 +92,8 @@ const handlePageChange = function(p: Number) {
 }
 
 const orders: Ref<Array<OrderDetailResponse>> = ref([])
+const paymentService = ref(0)
+const paymentServices: Ref<Array<PaymentServiceResponse>> = ref([])
 
 const selectedOrder: Ref<OrderDetailResponse | undefined> = ref()
 const goodView = computed(() => {
@@ -96,15 +106,32 @@ const goodView = computed(() => {
 })
 const orderDialogVisible = ref(false)
 
-// const statusMap = {
-//     0: '未支付',
-//     1: '已支付',
-//     2: '已发货',
-//     3: '交易成功'
-// }
+const handlePayClick = async (order_id: Number) => {
+    try {
+        await payOrder({
+            order_id: order_id,
+            service_id: paymentService.value
+        })
+        selectedOrder.value!.status = 1
+        orderDialogVisible.value = false
+        ElMessage({
+            type: 'success',
+            message: '支付成功'
+        })
+    } catch (err) {
+        ElMessage({
+            type: 'error',
+            message: '支付失败'
+        })
+        console.error(err)
+    }
+}
+
 const statusMap = {
-    0: '已支付',
-    1: '交易成功'
+    0: '未支付',
+    1: '已支付',
+    2: '已发货',
+    3: '交易成功'
 }
 
 const loadOrders = async () => {
@@ -127,6 +154,9 @@ const loadOrders = async () => {
             )
         )
         pages.value = orders_response.data.pages as number
+        const services = await getPaymentServices() as AxiosResponse<Array<PaymentServiceResponse>>
+        paymentServices.value = services.data
+        paymentService.value = paymentServices.value[0].id as number
     } catch (err) {
         console.error(err)
     }
@@ -205,5 +235,9 @@ onMounted(async () => {
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
   font-size: 30px;
+}
+
+.pay-box .el-button {
+    margin-left: 0.3rem;
 }
 </style>
