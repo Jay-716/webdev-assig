@@ -23,7 +23,7 @@
                     </div>
                     <div class="flex-col item-center">
                         <div>今日销售额</div>
-                        <div>{{ storeProfile?.day_total_price }}</div>
+                        <div>{{ toPriceDisplay(storeProfile?.day_total_price || 0) }}</div>
                     </div>
                     <div class="flex-col item-center">
                         <div>本月订单数</div>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="flex-col item-center">
                         <div>本月销售额</div>
-                        <div>{{ storeProfile?.month_total_price }}</div>
+                        <div>{{ toPriceDisplay(storeProfile?.month_total_price || 0) }}</div>
                     </div>
                 </div>
                 <div class="flex-col item-center sans-font orders-box">
@@ -143,6 +143,11 @@ import { onMounted, ref, type Ref } from 'vue';
 import router from '@/router';
 import { baseUrl } from '@/config'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+
+const toPriceDisplay = (price: Number) => {
+    const s = price.toString()
+    return '¥' + s.slice(0, -2) + '.' + s.slice(-2)
+}
 
 const userStore = useUserStore()
 const goods: Ref<Array<GoodResponse>> = ref([])
@@ -370,10 +375,10 @@ onMounted(async () => {
     box-shadow: 0.4rem 0.4rem 0.4rem rgba(0, 0, 0, 0.1);
     transition: ease 100ms;
 }
-.store-stat-box div:nth-child(1) {
+.store-stat-box div div:nth-child(1) {
     font-size: 1.2rem;
 }
-.store-stat-box div:nth-child(2) {
+.store-stat-box div div:nth-child(2) {
     margin-top: 0.3rem;
     font-size: 1.1rem;
 }

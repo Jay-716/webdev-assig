@@ -151,7 +151,7 @@ onUnmounted(() => {
             </div>
         </RouterLink>
         <el-input placeholder="搜索" class="search-bar" :prefix-icon="Search" v-model="searchText" />
-        <nav class="nav-links">
+        <nav class="nav-links sans-font">
             <RouterLink to="/cart" v-if="!storeLogin">
                 <el-icon>
                     <ShoppingCart v-if="cartEmpty" />
@@ -197,7 +197,7 @@ onUnmounted(() => {
         <Transition name="notif-popup">
             <div ref="notificationPopup" v-show="notifPopupState.visible" class="popup-box notification-popup-box"
                 @mouseenter="notifPopupState.handleMouseEnter" @mouseleave="notifPopupState.handleMouseLeave">
-                <div class="popup notification-popup">
+                <div class="popup notification-popup sans-font">
                     <div v-if="notifications.length !== 0" class="notif-list">
                         <div v-for="notif in notifications" :key="notif.id as PropertyKey" class="notif-item">
                             <div class="notif-text">
@@ -220,7 +220,7 @@ onUnmounted(() => {
         <Transition name="sett-popup">
             <div ref="settingPopup" v-show="settPopupState.visible" class="popup-box setting-popup-box"
                 @mouseenter="settPopupState.handleMouseEnter" @mouseleave="settPopupState.handleMouseLeave">
-                <div class="popup setting-popup">
+                <div class="popup setting-popup sans-font">
                     <!-- TODO: Try implementing this using element plus Drawer -->
                     <span style="color: #bbbbbb;">暂无可用设置项</span>
                 </div>
@@ -254,7 +254,6 @@ onUnmounted(() => {
     border: #eee solid 3px;
     border-radius: 10px;
     padding: 10px 0;
-    font-family: sans-serif;
 }
 
 .popup .notif-list {
@@ -269,7 +268,6 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: sans-serif;
 }
 .notif-item .notif-text {
     box-sizing: border-box;
@@ -365,7 +363,6 @@ onUnmounted(() => {
 .nav-links a, div {
     text-decoration: none;
     color: #333;
-    font-family: sans-serif;
     align-items: center;
     display: flex;
     user-select: none;

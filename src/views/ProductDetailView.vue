@@ -20,8 +20,8 @@
                         </div>
                     </template>
                 </el-image>
-                <div
-                    style="flex: 6; margin-left: 30px; height: 100%; display: flex; flex-direction: column; align-items: start; gap: 5px; font-family: sans-serif;">
+                <div class="sans-font"
+                    style="flex: 6; margin-left: 30px; height: 100%; display: flex; flex-direction: column; align-items: start; gap: 5px;">
                     <span style="font-size: 25px;">{{ product?.name }}</span>
                     <span style="font-size: 1.2em; color: #111111dd;">{{ product?.description }}</span>
                     <div
@@ -77,7 +77,7 @@
                             </div>
                         </template>
                     </el-image>
-                    <div style="font-family: sans-serif; margin-left: 10px; align-self: center;">
+                    <div class="sans-font" style="margin-left: 10px; align-self: center;">
                         <div>店铺</div>
                         <div style="font-size: 1.1em;">{{ product?.store.name }}</div>
                         <div style="color: #222222;">{{ product?.store.description }}</div>
@@ -86,7 +86,7 @@
                 <el-divider style="margin: 5px;" />
                 <div v-if="product?.styles !== null && product?.styles.length !== 0"
                     style="margin-left: 10px; display: inline-flex; align-items: center; margin-left: 10px;">
-                    <span style="font-family: sans-serif; margin-right: 10px;">选择款式</span>
+                    <span class="sans-font" style="margin-right: 10px;">选择款式</span>
                     <el-image :src="`${baseUrl}/file/download?key=${selectedStyle?.image_id}`" :alt="selectedStyle?.name"
                         style="width: 50px; height: 50px; border-radius: 8px;">
                         <template #placeholder>
@@ -110,7 +110,7 @@
             </div>
             <el-divider style="margin: 5px;" />
             <div id="detail-box" style="margin: 10px 0 10px 10px;">
-                <div style="font-family: sans-serif; font-size: 1.5em;">商品详情</div>
+                <div class="sans-font" style="font-size: 1.5em;">商品详情</div>
                 <div v-for="detail in product?.details" :key="detail.id as PropertyKey">
                     <div v-if="detail.text !== null && detail.text.length !== 0">
                         {{ detail.text }}
@@ -118,12 +118,12 @@
                     <el-image v-else :src="`${baseUrl}/file/download?key=${detail.image_id}`"
                         style="height: auto; width: auto; max-height: 1000px; max-width: 100%;">
                         <template #placeholder>
-                            <div class="el-image-slot">
+                            <div class="el-image-slot sans-font">
                                 <span>LOADING...</span>
                             </div>
                         </template>
                         <template #error>
-                            <div class="el-image-slot">
+                            <div class="el-image-slot sans-font">
                                 <el-icon>
                                     <IconPicture />
                                 </el-icon>
@@ -201,7 +201,7 @@ const tags = computed(() => {
 })
 const priceDisplay = computed(() => {
     const s = product.value?.price.toString()
-    return s?.slice(0, -1) + '.' + s?.slice(-1)
+    return '¥' + s?.slice(0, -2) + '.' + s?.slice(-2)
 })
 
 const handleAddToCart = async () => {
@@ -309,7 +309,6 @@ onMounted(async () => {
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
   font-size: 14px;
-  font-family: sans-serif;
 }
 .product-image-slot .el-icon {
   font-size: 30px;

@@ -52,7 +52,7 @@
             </div>
             <el-divider direction="vertical" style="height: 80%;" />
             <div style="align-self: center; padding: 20px; width: 600px; display: flex; flex-direction: column; align-items: baseline;">
-                <el-row style="width: 500px; margin-bottom: 50px;">
+                <el-row class="sans-font" style="width: 500px; margin-bottom: 50px;">
                     <el-col :span="6">
                         <el-statistic title="注册天数" :value="userProfile?.reg_days"/>
                     </el-col>
@@ -218,12 +218,10 @@ onMounted(async () => {
 }
 
 .el-col >>> .el-statistic__head {
-    font-family: sans-serif;
     font-size: medium;
 }
 
 .address-box {
-  font-family: sans-serif;
   font-size: 1em;
 }
 </style>

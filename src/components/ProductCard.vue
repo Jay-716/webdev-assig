@@ -4,7 +4,7 @@
         <div class="product-info">
             <h3 class="product-name">{{ product.name }}</h3>
             <span class="product-description">{{ product.description }}</span>
-            <span class="product-price">{{ product.price }}</span>
+            <span class="product-price">{{ price }}</span>
             <button class="add-to-cart" v-if="!nobutton" @click.stop="handleButtonClick">Add to Cart</button>
         </div>
     </div>
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import router from '@/router';
-import { onMounted, useTemplateRef } from 'vue';
+import { onMounted, useTemplateRef, computed } from 'vue';
 import { baseUrl } from '@/config';
 
 const { product, height, width, nobutton } = defineProps({
@@ -32,6 +32,10 @@ const { product, height, width, nobutton } = defineProps({
       type: Boolean,
       required: false,
     }
+})
+const price = computed(() => {
+  const s = product.price.toString()
+  return '¥' + s.slice(0, -2) + '.' + s.slice(-2)
 })
 
 const handleCardClick = function(event: Event) {

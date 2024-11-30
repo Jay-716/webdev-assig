@@ -24,7 +24,7 @@
       <el-icon style="font-size: larger;">
         <Histogram />
       </el-icon>
-      <span style="font-family: sans-serif; margin-right: 6px;">热门标签</span>
+      <span class="sans-font" style="margin-right: 6px;">热门标签</span>
     </div>
     <div class="tag-container">
       <div class="tag-wrapper" v-for="tag in tags" :key="tag.id as PropertyKey">

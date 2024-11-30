@@ -9,12 +9,12 @@
                     <el-image :src="`${baseUrl}/file/download?key=${product.good.image_id}`" :alt="product.good.name"
                         style="width: 175px; aspect-ratio: 1;">
                         <template #placeholder>
-                            <div class="product-image-slot">
+                            <div class="product-image-slot sans-font">
                                 <span>LOADING...</span>
                             </div>
                         </template>
                         <template #error>
-                            <div class="product-image-slot">
+                            <div class="product-image-slot sans-font">
                                 <el-icon>
                                     <IconPicture />
                                 </el-icon>
@@ -22,30 +22,30 @@
                         </template>
                     </el-image>
                     <div class="product-info">
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{ product.good.name
+                        <span class="sans-font" style="font-size: 20px; margin-bottom: 5px;">{{ product.good.name
                             }}</span>
-                        <span
-                            style="font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{
+                        <span class="sans-font"
+                            style="font-size: 16px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{
                             product.good.description }}</span>
-                        <span
-                            style="font-family: sans-serif; font-size: 14px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{
+                        <span class="sans-font"
+                            style="font-size: 14px; font-weight: 400; color: #333a; margin-bottom: 5px;">{{
                             product.style?.name }} x {{ product.count }}</span>
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px; margin-top: auto;">{{
-                            product.good.price }}</span>
+                        <span class="sans-font" style="font-size: 20px; margin-bottom: 5px; margin-top: auto;">{{
+                            toPriceDisplay(product.good.price) }}</span>
                     </div>
                     <div style="margin: 15px; margin-left: auto; display: flex; flex-direction: column; align-items: center;">
-                        <el-checkbox size="large" v-model="selection[idx]" />
+                        <el-checkbox size="large" v-model="selection[idx]" @change="handleCheckItem(idx)"/>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 80px; overflow: hidden;">
-        <div class="footer-box">
+        <div class="footer-box sans-font">
             <!-- intermediate state && handle click all -->
-            <el-checkbox v-model="selectAll" label="全选" size="large" />
+            <el-checkbox v-model="checkAll" :indeterminate="isIntermediate" label="全选" size="large" @change="handleCheckAllChange"/>
             <div style="margin-left: auto; display: flex; align-items: center;">
-                <span style="font-family: sans-serif; font-size: large; margin-right: 20px;">合计：{{ totalPriceDisplay
+                <span class="sans-font" style="font-size: large; margin-right: 20px;">合计：{{ totalPriceDisplay
                     }}</span>
                 <el-button type="primary" size="large" round @click="purchaseDialogVisible = true"
                     style="margin: 0 10px;">结算</el-button>
@@ -63,7 +63,7 @@
             <el-table :data="selectedProducts">
                 <el-table-column property="name" label="商品名" width="250" />
                 <el-table-column property="description" label="商品详情" width="400" />
-                <el-table-column property="price" label="价格" />
+                <el-table-column property="price_display" label="价格" />
             </el-table>
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
                 <span>付款方式：</span>
@@ -72,7 +72,7 @@
                         :value="service.id" />
                 </el-select>
                 <div style="margin-left: auto">
-                    <span style="margin-right: 20px;">合计：{{ totalPrice }}</span>
+                    <span style="margin-right: 20px;">合计：{{ toPriceDisplay(totalPrice) }}</span>
                     <el-button type="primary" @click="handlePay">确认下单</el-button>
                 </div>
             </div>
@@ -91,10 +91,39 @@ import { ElMessage } from 'element-plus';
 import router from '@/router';
 import { baseUrl } from '@/config';
 
-const totalPrice = ref(12345)
+const toPriceDisplay = (price: Number) => {
+    const s = price.toString()
+    return '¥' + s.slice(0, -2) + '.' + s.slice(-2)
+}
+
+const checkAll = ref(false)
+const isIntermediate = computed(() => selection.value.some(s => s) && !selection.value.every(s => s))
+const handleCheckAllChange = (val: boolean) => {
+    if (val) {
+        selection.value.fill(true)
+    } else {
+        selection.value.fill(false)
+    }
+}
+const handleCheckItem = (idx: number) => {
+    if (selection.value.some(s => s)) {
+        checkAll.value = false
+    }
+    if (selection.value.every(s => s)) {
+        checkAll.value = true
+    }
+}
+
+const totalPrice = computed(() => {
+    let sum = 0
+    products.value.forEach((p, i) => {
+        if (selection.value[i])
+            sum += p.good.price
+    });
+    return sum
+})
 const totalPriceDisplay = computed(() => {
-    let s = totalPrice.value.toString()
-    return s.slice(0, -2) + '.' + s.slice(-2)
+    return toPriceDisplay(totalPrice.value)
 })
 const selectAll = ref(false)
 const products: Ref<Array<CartItemResponse>> = ref([])
@@ -146,6 +175,9 @@ onMounted(async () => {
             items: Array<CartItemResponse>;
         }>
         products.value = cart_items.data.items
+        products.value.forEach(p => {
+            p.good.price_display = toPriceDisplay(p.good.price)
+        });
         selection.value = Array(products.value.length).fill(false)
     } catch (err) {
         console.error(err)
@@ -204,7 +236,6 @@ onMounted(async () => {
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
   font-size: 16px;
-  font-family: sans-serif;
 }
 .product-info {
     display: flex;

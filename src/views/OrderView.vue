@@ -10,12 +10,12 @@
                     <el-image :src="`${baseUrl}/file/download?key=${order.order_items[0].good.image_id}`" :alt="order.order_items[0].good.name"
                         style="width: 100px; aspect-ratio: 1;">
                         <template #placeholder>
-                            <div class="order-image-slot">
+                            <div class="order-image-slot sans-font">
                                 <span>LOADING...</span>
                             </div>
                         </template>
                         <template #error>
-                            <div class="order-image-slot">
+                            <div class="order-image-slot sans-font">
                                 <el-icon>
                                     <IconPicture />
                                 </el-icon>
@@ -23,18 +23,18 @@
                         </template>
                     </el-image>
                     <div class="order-info">
-                        <span style="font-family: sans-serif; font-size: 20px; margin-bottom: 5px;">{{
+                        <span class="sans-font" style="font-size: 20px; margin-bottom: 5px;">{{
                             order.order_items[0].good.name }}</span>
-                        <div
-                            style="display: flex; align-items: last baseline; margin-top: auto; font-family: sans-serif; font-size: 16px; font-weight: 400; color: #333a;">
+                        <div class="sans-font"
+                            style="display: flex; align-items: last baseline; margin-top: auto; font-size: 16px; font-weight: 400; color: #333a;">
                             <span style="flex: 1;">订单号：{{ order.id }}</span>
                             <span style="flex: 1;">下单时间：{{ order.created_at.toLocaleDateString() }}</span>
                         </div>
                     </div>
-                    <div class="order-status">
+                    <div class="order-status sans-font">
                         <!-- This works. Stupid ts. -->
                         <el-text type="success" size="large">{{ statusMap[order.status] }}</el-text>
-                        <el-text size="large">{{ order.total_price }}</el-text>
+                        <el-text size="large">{{ toPriceDisplay(order.total_price) }}</el-text>
                     </div>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                 <el-table-column property="name" label="商品名" width="250" />
                 <el-table-column property="style_name" label="商品详情" width="350" />
                 <el-table-column property="count" label="数量" />
-                <el-table-column property="price" label="价格" />
+                <el-table-column property="price_display" label="价格" />
             </el-table>
             <div style="display: flex; align-items: center; margin-top: 15px; padding-left: 5px">
                 <!-- TODO -->
@@ -66,7 +66,7 @@
                     <el-button type="primary" @click="handlePayClick(selectedOrder.id)">支付</el-button>
                 </div>
                 <div style="margin-left: auto">
-                    <span style="margin-right: 20px;">合计：{{ selectedOrder?.total_price }}</span>
+                    <span style="margin-right: 20px;">合计：{{ toPriceDisplay(selectedOrder?.total_price) }}</span>
                 </div>
             </div>
         </div>
@@ -83,6 +83,11 @@ import type { AxiosResponse } from 'axios';
 import type { OrderDetailResponse, OrderResponse, PaymentServiceResponse } from '@/api/schemas';
 import { ElMessage } from 'element-plus';
 import { baseUrl } from '@/config';
+
+const toPriceDisplay = (price: Number) => {
+    const s = price.toString()
+    return '¥' + s.slice(0, -2) + '.' + s.slice(-2)
+}
 
 const page = ref(1)
 const pages = ref(1)
@@ -102,7 +107,8 @@ const goodView = computed(() => {
         name: g.good.name,
         style_name: g.style?.name || g.good.description,
         count: g.count,
-        price: g.price
+        price: g.price,
+        price_display: toPriceDisplay(g.price)
     }))
 })
 const orderDialogVisible = ref(false)
@@ -203,7 +209,6 @@ onMounted(async () => {
   background: var(--el-fill-color-light);
   color: var(--el-text-color-secondary);
   font-size: 14px;
-  font-family: sans-serif;
 }
 .order-info {
     display: flex;
@@ -224,7 +229,6 @@ onMounted(async () => {
     justify-content: space-between;
     align-items: last baseline;
     flex: 1;
-    font-family: sans-serif;
 }
 
 .product-image-slot {

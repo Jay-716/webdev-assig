@@ -5,7 +5,7 @@
             <div class="flex-col detail-box sans-font">
                 <div class="good-name">{{ good?.name }}</div>
                 <div class="good-desc">{{ good?.description }}</div>
-                <div class="good-price">{{ good?.price }}</div>
+                <div class="good-price">{{ toPriceDisplay(good?.price) }}</div>
             </div>
         </div>
     </div>
@@ -33,6 +33,11 @@ class Good {
 <script setup lang="ts">
 import { defineProps } from 'vue';
 import { baseUrl } from '@/config';
+
+const toPriceDisplay = (price: Number) => {
+    const s = price.toString()
+    return '¥' + s.slice(0, -2) + '.' + s.slice(-2)
+}
 
 const { width, height, good } = defineProps({
     width: {
