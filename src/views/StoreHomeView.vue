@@ -251,11 +251,11 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.clearFiles()
   const file = files[0] as UploadRawFile
   file.uid = genFileId()
-  fileKey.value = genFileId()
+  fileKey.value = genFileId().toString()
   upload.value!.handleStart(file)
 }
 const submitUpload = () => {
-  fileKey.value = genFileId()
+  fileKey.value = genFileId().toString()
   upload.value!.submit()
 }
 const handleDeleteItem = (detail_id: Number) => {
@@ -279,8 +279,9 @@ const handleAddGood = async () => {
                 items: Array<StoreResponse>;
         }>
         const store = store_response.data.items[0]
-        newGood.value.store_id = store.id
-        newGood.value.image_id = fileKey.value.toString()
+        newGood.value.store_id = store.id as number
+        // @ts-ignore
+        newGood.value.image_id = fileKey.value
         await addGood(newGood.value)
         await loadAddData()
         addGoodDialogVisible.value = false

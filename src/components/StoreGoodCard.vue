@@ -5,7 +5,7 @@
             <div class="flex-col detail-box sans-font">
                 <div class="good-name">{{ good?.name }}</div>
                 <div class="good-desc">{{ good?.description }}</div>
-                <div class="good-price">{{ toPriceDisplay(good?.price) }}</div>
+                <div class="good-price">{{ toPriceDisplay(good?.price || 0) }}</div>
             </div>
         </div>
     </div>

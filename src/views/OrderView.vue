@@ -32,8 +32,10 @@
                         </div>
                     </div>
                     <div class="order-status sans-font">
-                        <!-- This works. Stupid ts. -->
-                        <el-text type="success" size="large">{{ statusMap[order.status] }}</el-text>
+                        <el-text type="success" size="large">
+                            <!-- @vue-expect-error This is not array indexing but property accessing -->
+                            {{ statusMap[order.status] }}
+                        </el-text>
                         <el-text size="large">{{ toPriceDisplay(order.total_price) }}</el-text>
                     </div>
                 </div>
@@ -66,7 +68,7 @@
                     <el-button type="primary" @click="handlePayClick(selectedOrder.id)">支付</el-button>
                 </div>
                 <div style="margin-left: auto">
-                    <span style="margin-right: 20px;">合计：{{ toPriceDisplay(selectedOrder?.total_price) }}</span>
+                    <span style="margin-right: 20px;">合计：{{ toPriceDisplay(selectedOrder?.total_price || 0) }}</span>
                 </div>
             </div>
         </div>

@@ -118,7 +118,7 @@ const totalPrice = computed(() => {
     let sum = 0
     products.value.forEach((p, i) => {
         if (selection.value[i])
-            sum += p.good.price
+            sum += p.good.price as number
     });
     return sum
 })
@@ -176,6 +176,7 @@ onMounted(async () => {
         }>
         products.value = cart_items.data.items
         products.value.forEach(p => {
+            // @ts-ignore
             p.good.price_display = toPriceDisplay(p.good.price)
         });
         selection.value = Array(products.value.length).fill(false)
