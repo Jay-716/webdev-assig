@@ -258,3 +258,11 @@ export function updateGood(good_id: Number, data: any) {
     data: data
   })
 }
+
+export function addGood(data: any) {
+  return request({
+    method: 'post',
+    url: '/good/full',
+    data: data
+  })
+}
