@@ -1,5 +1,9 @@
 # webdev-assig
 
+[English](https://github.com/Jay-716/webdev-assig/blob/master/README.md) | *简体中文*
+
+---
+
 一个基于Vue3的在线商城。[链接](https://webdev-assig.pages.dev/)
 
 本仓库将在**3个月后**转为私有！

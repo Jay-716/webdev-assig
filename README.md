@@ -1,5 +1,9 @@
 # webdev-assig
 
+*English* | [简体中文](https://github.com/Jay-716/webdev-assig/blob/master/README.zh-CN.md)
+
+---
+
 A Vue3 implementation of an online shoping website. [Link](https://webdev-assig.pages.dev/)
 
 This repo will stay in public for **3 months only**!
