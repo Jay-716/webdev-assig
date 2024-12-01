@@ -1,33 +1,50 @@
 # webdev-assig
 
-This template should help get you started developing with Vue 3 in Vite.
+A Vue3 implementation of an online shoping website. [Link](https://webdev-assig.pages.dev/)
 
-## Recommended IDE Setup
+This repo will stay in public for **3 months only**!
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+Student ID: 202230442159
 
-## Type Support for `.vue` Imports in TS
+Student Name: 卢俊杰
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
 
-## Customize configuration
+## Requirements
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+ - Vue.js 3
+ - Wrangler
 
-## Project Setup
 
-```sh
-pnpm install
-```
+## Usage
 
-### Compile and Hot-Reload for Development
+For developing, run:
 
-```sh
-pnpm dev
-```
+`pnpm run dev`
 
-### Type-Check, Compile and Minify for Production
+For deployment, run:
 
-```sh
-pnpm build
-```
+`pnpm run build` or `pnpm run deploy`
+
+The latter would deploy your website onto CloudFlare Pages(May require login).
+
+
+## Development
+
+Source tree explained:
+
+public: Public statis resource.
+
+index.html: App root.
+
+\*.json: frontend sh\*ts.
+
+src: Main app source.
+
+ - api: Accessing backend apis.
+ - assets: Static assets.
+ - components: Vue components.
+ - router: Vue router.
+ - store: Pinia stores.
+ - views: Pages.
+ - App.vue, main.ts: Vue app root.
+
