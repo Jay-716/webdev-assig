@@ -35,14 +35,23 @@
                     </div>
                 </div>
                 <div class="flex-col item-center sans-font orders-box">
-                    <div class="orders-box-title">待处理订单</div>
-                    <div v-for="oi in pendingOrderItems" :key="oi.id as PropertyKey" class="order-item-box flex-row">
+                    <div class="orders-box-title">
+                        <div v-if="showHistoryOrders">
+                            历史订单
+                            <button @click="handleSwitchShowHistoryOrders">待处理订单</button>
+                        </div>
+                        <div v-else>
+                            待处理订单
+                            <button @click="handleSwitchShowHistoryOrders">历史订单</button>
+                        </div>
+                    </div>
+                    <div v-for="oi in showHistoryOrders ? orderItems : pendingOrderItems" :key="oi.id as PropertyKey" class="order-item-box flex-row">
                         <div class="flex-col order-item-detail">
                             <div>{{ oi.good.name }}</div>
                             <div>{{ oi.style ? oi.style.name : oi.good.description }}</div>
                             <div>{{ oi.price }} x {{ oi.count }}</div>
                         </div>
-                        <div class="flex-col order-item-op item-center justc">
+                        <div v-if="!showHistoryOrders"class="flex-col order-item-op item-center justc">
                             <el-button type="primary" @click="handleSendClick(oi.id)">发货</el-button>
                         </div>
                     </div>
@@ -296,6 +305,11 @@ const handleAddGood = async () => {
             message: '添加失败'
         })
     }
+}
+
+const showHistoryOrders = ref(false)
+const handleSwitchShowHistoryOrders = async () => {
+    showHistoryOrders.value = !showHistoryOrders.value
 }
 
 const loadAddData = async () => {
