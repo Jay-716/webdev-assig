@@ -322,10 +322,10 @@ const loadAddData = async () => {
             const oi_reponse = await getStoreGoodOrders(good.id) as AxiosResponse<Page<OrderItemResponse>>
             orderItems.value.push(...oi_reponse.data.items)
         }
-        pendingOrderItems.value = await Promise.all(orderItems.value.filter(async oi => {
+        pendingOrderItems.value = (await Promise.all(orderItems.value.map(async oi => {
             const status_response = await getOrderItemStatus(oi.id) as AxiosResponse<Boolean>
-            return !status_response.data
-        }))
+            return { value: oi, include: !status_response.data }
+        }))).filter(vi => vi.include).map(vi => vi.value)
     } catch (err) {
         ElMessage({
             type: 'error',
