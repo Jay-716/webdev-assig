@@ -262,6 +262,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     align-items: baseline;
+    overflow: auto;
 }
 .notif-list .notif-item {
     width: 100%;
