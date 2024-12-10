@@ -33,7 +33,7 @@
     </div>
   </div>
   <div class="product-container">
-    <div class="product-card" v-for="product in products" :key="product.id as PropertyKey">
+    <div class="product-card" v-for="product in showSearchResults ? searchResults : products" :key="product.id as PropertyKey">
       <ProductCard :product="product" nobutton/>
     </div>
   </div>
@@ -43,14 +43,41 @@
 import { ref, onMounted, type Ref } from 'vue';
 import { Histogram, Picture as IconPicture } from '@element-plus/icons-vue';
 import ProductCard from './ProductCard.vue';
-import { getBanner, getRandomGoods, getRandomTags } from '@/api';
-import type { BannerResponse, GoodResponse, TagResponse } from '@/api/schemas';
+import { getBanner, getGood, getRandomGoods, getRandomTags } from '@/api';
+import type { BannerResponse, GoodResponse, Page, TagResponse } from '@/api/schemas';
 import type { AxiosResponse } from 'axios';
 import { baseUrl } from '@/config';
+import { ElMessage } from 'element-plus';
 
 const products: Ref<Array<GoodResponse>> = ref([])
+const searchResults: Ref<GoodResponse[]> = ref([])
+const showSearchResults = ref(false)
 const banners: Ref<Array<BannerResponse>> = ref([])
 const tags: Ref<Array<TagResponse>> = ref([])
+
+const handleSearch = (q: String) => {
+  doSearch(q).then(res => {
+    searchResults.value = res || []
+    showSearchResults.value = true
+  })
+}
+const doSearch = async (q: String) => {
+  try {
+    const resp = await getGood(q) as AxiosResponse<Page<GoodResponse>>
+    return resp.data.items
+  } catch (err) {
+    console.error(err)
+    ElMessage({
+      type: 'error',
+      message: '搜索失败，请稍后重试'
+    })
+  }
+}
+const handleSearchReset = () => {
+    showSearchResults.value = false
+}
+
+defineExpose({handleSearch, handleSearchReset})
 
 onMounted(async () => {
   try {

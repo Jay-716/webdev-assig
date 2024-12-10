@@ -266,3 +266,13 @@ export function addGood(data: any) {
     data: data
   })
 }
+
+export function getGood(q: String) {
+  return request({
+    method: 'get',
+    url: '/good/search',
+    params: {
+      q,
+    }
+  })
+}

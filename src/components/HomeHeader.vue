@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef, Teleport, Transition, reactive, onUnmounted, type Ref } from 'vue';
-import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets, Management } from '@element-plus/icons-vue';
+import { ShoppingBag, Search, UserFilled, Bell, ShoppingCart, ShoppingCartFull, Tickets, Management, CircleClose } from '@element-plus/icons-vue';
 import { getNotifs, getUser } from '@/api';
 import type { AxiosResponse } from 'axios';
 import type { NotifiResponse, UserResponse } from '@/api/schemas';
 import { baseUrl } from '@/config';
+
+const { onSearch, onSearchReset } = defineProps<{
+    onSearch?: (q: String) => void,
+    onSearchReset?: () => void
+}>()
 
 const userLoggedIn = ref(true)
 const storeLogin = ref(localStorage.getItem('store') === '1')
@@ -15,6 +20,18 @@ const notifications: Ref<Array<NotifiResponse>> = ref([])
 
 const avatarErrorHandler = function() {
     console.warn("Failed to load avatar, url:", user.value?.avatar_id)
+}
+
+const handleSearchEnter = () => {
+    if (onSearch !== undefined && searchText.value.length !== 0) {
+        onSearch(searchText.value)
+    }
+}
+const handleSearchReset = () => {
+    if (onSearchReset !== undefined) {
+        searchText.value = ''
+        onSearchReset()
+    }
 }
 
 const notifPopupState = reactive({
@@ -150,7 +167,14 @@ onUnmounted(() => {
                 <h1 class="title">Jay的小商城</h1>
             </div>
         </RouterLink>
-        <el-input placeholder="搜索" class="search-bar" :prefix-icon="Search" v-model="searchText" />
+        <el-input placeholder="搜索" class="search-bar" :prefix-icon="Search" v-model="searchText"
+            @keyup.enter.native="handleSearchEnter">
+            <template #suffix>
+                <el-icon class="reset-search-icon" @click="handleSearchReset">
+                    <CircleClose />
+                </el-icon>
+            </template>
+        </el-input>
         <nav class="nav-links sans-font">
             <RouterLink to="/cart" v-if="!storeLogin">
                 <el-icon>
@@ -186,7 +210,8 @@ onUnmounted(() => {
                 <h2>设置</h2>
             </div>
             <RouterLink to="/user" :title="userLoggedIn ? user?.username : '请登录'">
-                <el-avatar v-if="userLoggedIn" :size="40" :src="`${baseUrl}/file/download?key=${user?.avatar_id}`" @error="avatarErrorHandler">
+                <el-avatar v-if="userLoggedIn" :size="40" :src="`${baseUrl}/file/download?key=${user?.avatar_id}`"
+                    @error="avatarErrorHandler">
                     <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
                 </el-avatar>
                 <el-avatar v-else :size="40" :icon="UserFilled" />
@@ -203,7 +228,8 @@ onUnmounted(() => {
                             <div class="notif-text">
                                 <span style="font-size: medium;">{{ notif.title }}</span>
                                 <span style="font-size: 14px; color: #333333aa;">{{ notif.content }}</span>
-                                <span style="font-size: 14px; color: #333333aa;">{{ new Date(notif.created_at).toLocaleDateString()
+                                <span style="font-size: 14px; color: #333333aa;">{{ new
+                                    Date(notif.created_at).toLocaleDateString()
                                     }}</span>
                             </div>
                             <el-divider style="margin: 3px;" />
@@ -376,5 +402,10 @@ onUnmounted(() => {
 /* Navigator text */
 .nav-links a, div h2 {
     font-size: medium;
+}
+
+.reset-search-icon {
+    font-size: 1rem;
+    cursor: pointer;
 }
 </style>
